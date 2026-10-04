@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+
 <meta charset="UTF-8">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,195 +10,293 @@
 <title>Create account - TalkWorld</title>
 
 <link rel="stylesheet" href="style.css">
+
 </head>
+
 <body>
-<!-- NAVIGATION -->
 
 <header class="navbar">
 
-    <div class="logo">
-        TalkWorld
-    </div>
+<div class="logo">
+TalkWorld
+</div>
 
+<nav>
 
-    <nav>
+<a href="index.html">
+Home
+</a>
 
-        <a href="index.html">
-            Home
-        </a>
-
-    </nav>
+</nav>
 
 </header>
 
 
-
-<!-- SIGN UP -->
-
 <main>
 
-    <section class="about">
+<section class="about">
+
+<p class="small-title">
+JOIN TALKWORLD
+</p>
+
+<h2>
+Create your account
+</h2>
+
+<p>
+Create an account and start connecting
+with people around the world.
+</p>
 
 
-        <p class="small-title">
-            JOIN TALKWORLD
-        </p>
+<div style="
+max-width: 450px;
+margin: 40px auto;
+text-align: left;
+">
+
+<label for="username">
+Username
+</label>
+
+<input
+id="username"
+type="text"
+placeholder="Choose a username"
+style="
+width: 100%;
+padding: 15px;
+margin: 8px 0 20px;
+border: 1px solid #ddd;
+border-radius: 8px;
+font-size: 16px;
+">
 
 
-        <h2>
-            Create your account
-        </h2>
+<label for="email">
+Email
+</label>
+
+<input
+id="email"
+type="email"
+placeholder="you@example.com"
+style="
+width: 100%;
+padding: 15px;
+margin: 8px 0 20px;
+border: 1px solid #ddd;
+border-radius: 8px;
+font-size: 16px;
+">
 
 
-        <p>
-            Create an account and start connecting
-            with people around the world.
-        </p>
+<label for="password">
+Password
+</label>
+
+<input
+id="password"
+type="password"
+placeholder="Create a password"
+style="
+width: 100%;
+padding: 15px;
+margin: 8px 0 25px;
+border: 1px solid #ddd;
+border-radius: 8px;
+font-size: 16px;
+">
 
 
+<button
+id="signup-button"
+class="primary-button"
+type="button"
+style="width: 100%;">
 
-        <div style="max-width: 450px; margin: 40px auto; text-align: left;">
+Create account
 
-
-            <label for="username">
-                Username
-            </label>
-
-
-            <input
-                id="username"
-                type="text"
-                placeholder="Choose a username"
-                style="width: 100%; padding: 15px; margin: 8px 0 20px; border: 1px solid #ddd; border-radius: 8px; font-size: 16px;"
-            >
+</button>
 
 
+<p
+id="message"
+style="
+margin-top: 20px;
+text-align: center;
+">
+</p>
 
-            <label for="email">
-                Email
-            </label>
+</div>
 
-
-            <input
-                id="email"
-                type="email"
-                placeholder="you@example.com"
-                style="width: 100%; padding: 15px; margin: 8px 0 20px; border: 1px solid #ddd; border-radius: 8px; font-size: 16px;"
-            >
-
-
-
-            <label for="password">
-                Password
-            </label>
-
-
-            <input
-                id="password"
-                type="password"
-                placeholder="Create a password"
-                style="width: 100%; padding: 15px; margin: 8px 0 25px; border: 1px solid #ddd; border-radius: 8px; font-size: 16px;"
-            >
-
-
-
-            <button
-                id="signup-button"
-                class="primary-button"
-                type="button"
-                style="width: 100%;">
-
-                Create account
-
-            </button>
-
-
-            <p
-                id="message"
-                style="margin-top: 20px; text-align: center;">
-
-            </p>
-
-
-        </div>
-
-
-    </section>
+</section>
 
 </main>
 
 
-
-<!-- FOOTER -->
-
 <footer>
 
-    <p>
-        © 2026 TalkWorld
-    </p>
+<p>
+© 2026 TalkWorld
+</p>
 
 </footer>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+
+<!-- SUPABASE -->
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <script src="supabase.js"></script>
 
+
+<!-- ACCOUNT CREATION -->
+
 <script>
-const signupButton = document.querySelector("#signup-button");
-const message = document.querySelector("#message");
 
-signupButton.addEventListener("click", async function () {
+const signupButton =
+document.querySelector("#signup-button");
 
-const username = document.querySelector("#username").value.trim();
-const email = document.querySelector("#email").value.trim();
-const password = document.querySelector("#password").value;
+const message =
+document.querySelector("#message");
+
+
+signupButton.addEventListener(
+"click",
+async function () {
+
+const username =
+document.querySelector("#username").value.trim();
+
+const email =
+document.querySelector("#email").value.trim();
+
+const password =
+document.querySelector("#password").value;
+
 
 if (!username || !email || !password) {
-message.textContent = "Please fill in all fields.";
+
+message.textContent =
+"Please fill in all fields.";
+
 return;
 }
+
 
 if (password.length < 6) {
-message.textContent = "Password must be at least 6 characters.";
+
+message.textContent =
+"Password must be at least 6 characters.";
+
 return;
 }
+
 
 signupButton.disabled = true;
-signupButton.textContent = "Creating account...";
 
-const { data, error } = await supabaseClient.auth.signUp({
+signupButton.textContent =
+"Creating account...";
+
+
+try {
+
+const { data, error } =
+await supabaseClient.auth.signUp({
+
 email: email,
+
 password: password
+
 });
 
+
 if (error) {
-message.textContent = error.message;
+
+message.textContent =
+error.message;
+
 signupButton.disabled = false;
-signupButton.textContent = "Create account";
+
+signupButton.textContent =
+"Create account";
+
 return;
 }
 
-if (data.user) {
 
-const { error: profileError } = await supabaseClient
-.from("profiles")
-.insert({
-id: data.user.id,
-username: username
-});
+if (!data.user) {
 
-if (profileError) {
 message.textContent =
-"Account created, but your profile could not be saved.";
-console.error(profileError);
-} else {
-message.textContent =
-"Account created successfully! Check your email.";
-}
-}
+"Something went wrong. Please try again.";
 
 signupButton.disabled = false;
-signupButton.textContent = "Create account";
+
+signupButton.textContent =
+"Create account";
+
+return;
+}
+
+
+const { error: profileError } =
+await supabaseClient
+.from("profiles")
+.insert({
+
+id: data.user.id,
+
+username: username
+
 });
+
+
+if (profileError) {
+
+console.error(profileError);
+
+message.textContent =
+"Account created, but the profile could not be saved.";
+
+signupButton.disabled = false;
+
+signupButton.textContent =
+"Create account";
+
+return;
+}
+
+
+message.textContent =
+"Account created successfully! Check your email.";
+
+signupButton.textContent =
+"Account created ✓";
+
+signupButton.disabled = true;
+
+
+} catch (error) {
+
+console.error(error);
+
+message.textContent =
+"Something went wrong. Please try again.";
+
+signupButton.disabled = false;
+
+signupButton.textContent =
+"Create account";
+
+}
+
+}
+);
+
 </script>
 
 </body>
+
 </html>
