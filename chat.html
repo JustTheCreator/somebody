@@ -1,644 +1,623 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>TalkWorld Chat</title>
+  <title>TalkWorld</title>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-<style>
-* {
-box-sizing: border-box;
-}
+  <style>
+    * {
+      box-sizing: border-box;
+    }
 
-body {
-margin: 0;
-font-family: Arial, sans-serif;
-background: #f2f2f2;
-height: 100vh;
-display: flex;
-flex-direction: column;
-}
+    body {
+      margin: 0;
+      height: 100vh;
+      font-family: Arial, sans-serif;
+      background: #f3f3f3;
+      display: flex;
+      flex-direction: column;
+    }
 
-/* CABECERA */
+    header {
+      height: 65px;
+      background: #111;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 21px;
+      font-weight: bold;
+    }
 
-header {
-height: 65px;
-background: #111;
-color: white;
+    #messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
 
-display: flex;
-align-items: center;
-justify-content: center;
+    .message {
+      max-width: 75%;
+      padding: 11px 15px;
+      border-radius: 18px;
+      word-wrap: break-word;
+      line-height: 1.4;
+    }
 
-font-size: 21px;
-font-weight: bold;
-}
+    .mine {
+      align-self: flex-end;
+      background: #111;
+      color: white;
+      border-bottom-right-radius: 5px;
+    }
 
-/* MENSAJES */
+    .theirs {
+      align-self: flex-start;
+      background: white;
+      color: #111;
+      border-bottom-left-radius: 5px;
+    }
 
-#messages {
-flex: 1;
+    #input-area {
+      background: white;
+      border-top: 1px solid #ddd;
+      padding: 12px;
+      display: flex;
+      gap: 8px;
+    }
 
-overflow-y: auto;
+    #messageInput {
+      flex: 1;
+      border: 1px solid #ccc;
+      border-radius: 22px;
+      padding: 12px 16px;
+      font-size: 16px;
+      outline: none;
+    }
 
-padding: 20px;
+    #sendButton {
+      border: none;
+      background: #111;
+      color: white;
+      border-radius: 22px;
+      padding: 0 20px;
+      font-size: 15px;
+      cursor: pointer;
+    }
 
-display: flex;
-flex-direction: column;
+    #sendButton:disabled {
+      opacity: 0.5;
+    }
 
-gap: 8px;
-}
-
-.message {
-max-width: 75%;
-
-padding: 11px 15px;
-
-border-radius: 18px;
-
-word-wrap: break-word;
-
-font-size: 15px;
-
-line-height: 1.4;
-}
-
-/* MIS MENSAJES */
-
-.mine {
-align-self: flex-end;
-
-background: #111;
-color: white;
-
-border-bottom-right-radius: 5px;
-}
-
-/* MENSAJES DEL OTRO */
-
-.theirs {
-align-self: flex-start;
-
-background: white;
-color: #111;
-
-border-bottom-left-radius: 5px;
-
-box-shadow: 0 1px 3px rgba(0,0,0,0.08);
-}
-
-/* ZONA DE ESCRIBIR */
-
-#input-area {
-background: white;
-
-border-top: 1px solid #ddd;
-
-padding: 12px;
-
-display: flex;
-
-gap: 8px;
-}
-
-#messageInput {
-flex: 1;
-
-border: 1px solid #ccc;
-
-border-radius: 22px;
-
-padding: 12px 16px;
-
-font-size: 16px;
-
-outline: none;
-}
-
-#messageInput:focus {
-border-color: #111;
-}
-
-#sendButton {
-border: none;
-
-background: #111;
-
-color: white;
-
-border-radius: 22px;
-
-padding: 0 20px;
-
-font-size: 15px;
-
-cursor: pointer;
-}
-
-#sendButton:disabled {
-opacity: 0.5;
-}
-
-/* MENSAJE DE CARGA */
-
-#loading {
-text-align: center;
-
-padding: 20px;
-
-color: #777;
-}
-</style>
+    #status {
+      text-align: center;
+      padding: 8px;
+      color: #777;
+      font-size: 13px;
+      background: white;
+    }
+  </style>
 </head>
 
 <body>
 
 <header>
-TalkWorld
+  TalkWorld
 </header>
 
-<div id="loading">
-Cargando conversación...
+<div id="status">
+  Conectando...
 </div>
 
 <div id="messages"></div>
 
 <div id="input-area">
 
-<input
-id="messageInput"
-type="text"
-placeholder="Escribe un mensaje..."
-autocomplete="off"
->
+  <input
+    id="messageInput"
+    type="text"
+    placeholder="Escribe un mensaje..."
+    autocomplete="off"
+  >
 
-<button id="sendButton">
-Enviar
-</button>
+  <button id="sendButton">
+    Enviar
+  </button>
 
 </div>
 
-
 <script>
 
-/* =====================================================
-SUPABASE
-===================================================== */
+  /* =========================================
+     SUPABASE
+  ========================================= */
 
-const SUPABASE_URL = "https://arltyssfvxusgbczehwd.supabase.co";
+  const SUPABASE_URL = "https://arltyssfvxusgbczehwd.supabase.co";
 
-const SUPABASE_ANON_KEY = "sb_publishable_6shqoWqM68h4HWe5FDae_Q_LBYXMPI5";
+  const SUPABASE_ANON_KEY = "sb_publishable_6shqoWqM68h4HWe5FDae_Q_LBYXMPI5";
 
+  const supabaseClient = supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_ANON_KEY
+  );
 
-const supabaseClient = supabase.createClient(
-SUPABASE_URL,
-SUPABASE_ANON_KEY
-);
 
+  /* =========================================
+     ELEMENTOS
+  ========================================= */
 
-/* =====================================================
-ELEMENTOS
-===================================================== */
+  const messagesContainer =
+    document.getElementById("messages");
 
-const messagesContainer =
-document.getElementById("messages");
+  const messageInput =
+    document.getElementById("messageInput");
 
-const messageInput =
-document.getElementById("messageInput");
+  const sendButton =
+    document.getElementById("sendButton");
 
-const sendButton =
-document.getElementById("sendButton");
+  const status =
+    document.getElementById("status");
 
-const loading =
-document.getElementById("loading");
 
+  /* =========================================
+     VARIABLES
+  ========================================= */
 
-/* =====================================================
-VARIABLES
-===================================================== */
+  let currentUser = null;
 
-let currentUser = null;
+  let otherUserId = null;
 
-let otherUserId = null;
 
-let realtimeChannel = null;
+  /* =========================================
+     OBTENER USUARIO
+  ========================================= */
 
+  async function getCurrentUser() {
 
-/* =====================================================
-INICIAR
-===================================================== */
+    const {
+      data,
+      error
+    } = await supabaseClient.auth.getUser();
 
-async function init() {
+    if (error || !data.user) {
 
-const {
-data: {
-user
-},
-error
-} = await supabaseClient.auth.getUser();
+      window.location.href = "login.html";
 
+      return null;
+    }
 
-if (error || !user) {
+    return data.user;
+  }
 
-window.location.href = "login.html";
 
-return;
-}
+  /* =========================================
+     ENCONTRAR AUTOMÁTICAMENTE AL OTRO USUARIO
+  ========================================= */
 
+  async function findOtherUser() {
 
-currentUser = user;
+    /*
+      Buscamos mensajes enviados por el usuario actual.
+    */
 
+    const {
+      data: sentMessages,
+      error: sentError
+    } = await supabaseClient
 
-/*
-IMPORTANTE:
+      .from("messages")
 
-Para probar dos cuentas directamente podemos indicar
-el usuario receptor mediante la URL:
+      .select("sender, receiver")
 
-chat.html?user=UUID_DEL_OTRO_USUARIO
+      .eq("sender", currentUser.id)
 
-*/
+      .limit(1);
 
-const params =
-new URLSearchParams(window.location.search);
 
+    if (
+      !sentError &&
+      sentMessages &&
+      sentMessages.length > 0
+    ) {
 
-otherUserId =
-params.get("user");
+      otherUserId =
+        sentMessages[0].receiver;
 
+      return;
 
-/*
-Si todavía no hemos indicado el otro usuario,
-mostramos todos los mensajes disponibles.
-*/
+    }
 
-await loadMessages();
 
+    /*
+      Si todavía no ha enviado mensajes,
+      buscamos mensajes que haya recibido.
+    */
 
-subscribeToMessages();
+    const {
+      data: receivedMessages,
+      error: receivedError
+    } = await supabaseClient
 
+      .from("messages")
 
-loading.style.display = "none";
+      .select("sender, receiver")
 
-}
+      .eq("receiver", currentUser.id)
 
+      .limit(1);
 
-/* =====================================================
-CARGAR MENSAJES
-===================================================== */
 
-async function loadMessages() {
+    if (
+      !receivedError &&
+      receivedMessages &&
+      receivedMessages.length > 0
+    ) {
 
-let query =
-supabaseClient
-.from("messages")
-.select("*")
-.order("created_at", {
-ascending: true
-});
+      otherUserId =
+        receivedMessages[0].sender;
 
+      return;
 
-/*
-Si conocemos al otro usuario,
-filtramos únicamente la conversación
-entre ambos.
-*/
+    }
 
-if (otherUserId) {
 
-query = query.or(
-`and(sender.eq.${currentUser.id},receiver.eq.${otherUserId}),and(sender.eq.${otherUserId},receiver.eq.${currentUser.id})`
-);
+    otherUserId = null;
 
-}
+  }
 
 
-const {
-data,
-error
-} = await query;
+  /* =========================================
+     CARGAR MENSAJES
+  ========================================= */
 
+  async function loadMessages() {
 
-if (error) {
+    if (!otherUserId) {
 
-console.error(
-"Error cargando mensajes:",
-error
-);
+      status.textContent =
+        "No se ha encontrado una conversación.";
 
-loading.textContent =
-"No se pudieron cargar los mensajes.";
+      return;
 
-return;
-}
+    }
 
 
-messagesContainer.innerHTML = "";
+    const {
+      data,
+      error
+    } = await supabaseClient
 
+      .from("messages")
 
-data.forEach(message => {
+      .select("*")
 
-addMessageToScreen(message);
+      .or(
+        `and(sender.eq.${currentUser.id},receiver.eq.${otherUserId}),and(sender.eq.${otherUserId},receiver.eq.${currentUser.id})`
+      )
 
-});
+      .order("created_at", {
+        ascending: true
+      });
 
 
-scrollToBottom();
+    if (error) {
 
-}
+      console.error(
+        "Error cargando mensajes:",
+        error
+      );
 
+      status.textContent =
+        "Error cargando la conversación.";
 
-/* =====================================================
-MOSTRAR MENSAJE
-===================================================== */
+      return;
 
-function addMessageToScreen(message) {
+    }
 
-/*
-Evitamos duplicados.
-*/
 
-if (
-document.querySelector(
-`[data-message-id="${message.id}"]`
-)
-) {
+    messagesContainer.innerHTML = "";
 
-return;
 
-}
+    data.forEach(message => {
 
+      showMessage(message);
 
-/*
-Si estamos hablando con una persona concreta,
-ignoramos mensajes de otras conversaciones.
-*/
+    });
 
-if (otherUserId) {
 
-const belongsToConversation =
+    scrollBottom();
 
-(
-message.sender === currentUser.id &&
-message.receiver === otherUserId
-)
 
-||
+    status.textContent =
+      "En línea";
 
-(
-message.sender === otherUserId &&
-message.receiver === currentUser.id
-);
+  }
 
 
-if (!belongsToConversation) {
+  /* =========================================
+     MOSTRAR MENSAJE
+  ========================================= */
 
-return;
+  function showMessage(message) {
 
-}
+    if (
+      document.querySelector(
+        `[data-id="${message.id}"]`
+      )
+    ) {
 
-}
+      return;
 
+    }
 
-const div =
-document.createElement("div");
 
+    const element =
+      document.createElement("div");
 
-div.classList.add("message");
 
+    element.classList.add("message");
 
-/*
-AQUÍ diferenciamos quién envió el mensaje.
-*/
 
-if (
-message.sender === currentUser.id
-) {
+    /*
+      AQUÍ distinguimos al remitente.
+    */
 
-div.classList.add("mine");
+    if (
+      message.sender === currentUser.id
+    ) {
 
-} else {
+      element.classList.add("mine");
 
-div.classList.add("theirs");
+    } else {
 
-}
+      element.classList.add("theirs");
 
+    }
 
-div.dataset.messageId =
-message.id;
 
+    element.dataset.id =
+      message.id;
 
-div.textContent =
-message.content;
 
+    element.textContent =
+      message.content;
 
-messagesContainer.appendChild(div);
 
+    messagesContainer.appendChild(
+      element
+    );
 
-scrollToBottom();
 
-}
+    scrollBottom();
 
+  }
 
-/* =====================================================
-REALTIME
-===================================================== */
 
-function subscribeToMessages() {
+  /* =========================================
+     REALTIME
+  ========================================= */
 
-realtimeChannel =
+  function startRealtime() {
 
-supabaseClient
+    supabaseClient
 
-.channel(
-"talkworld-messages"
-)
+      .channel("talkworld-chat")
 
-.on(
+      .on(
 
-"postgres_changes",
+        "postgres_changes",
 
-{
+        {
+          event: "INSERT",
+          schema: "public",
+          table: "messages"
+        },
 
-event: "INSERT",
+        payload => {
 
-schema: "public",
+          const message =
+            payload.new;
 
-table: "messages"
 
-},
+          /*
+            Solo mostramos mensajes de
+            nuestra conversación.
+          */
 
-payload => {
+          const belongsToConversation =
 
-console.log(
-"Nuevo mensaje:",
-payload.new
-);
+            (
+              message.sender === currentUser.id &&
+              message.receiver === otherUserId
+            )
 
+            ||
 
-addMessageToScreen(
-payload.new
-);
+            (
+              message.sender === otherUserId &&
+              message.receiver === currentUser.id
+            );
 
-}
 
-)
+          if (
+            belongsToConversation
+          ) {
 
-.subscribe(
+            showMessage(message);
 
-status => {
+          }
 
-console.log(
-"Realtime:",
-status
-);
+        }
 
-}
+      )
 
-);
+      .subscribe(
 
-}
+        channelStatus => {
 
+          console.log(
+            "Realtime:",
+            channelStatus
+          );
 
-/* =====================================================
-ENVIAR MENSAJE
-===================================================== */
+        }
 
-async function sendMessage() {
+      );
 
-const content =
-messageInput.value.trim();
+  }
 
 
-if (!content) {
+  /* =========================================
+     ENVIAR MENSAJE
+  ========================================= */
 
-return;
+  async function sendMessage() {
 
-}
+    const content =
+      messageInput.value.trim();
 
 
-if (!otherUserId) {
+    if (!content) {
+      return;
+    }
 
-alert(
-"No se ha seleccionado el usuario con el que hablar."
-);
 
-return;
+    if (!otherUserId) {
 
-}
+      await findOtherUser();
 
 
-sendButton.disabled = true;
+      if (!otherUserId) {
 
+        alert(
+          "Todavía no se ha encontrado la otra cuenta."
+        );
 
-const {
-error
-} = await supabaseClient
+        return;
 
-.from("messages")
+      }
 
-.insert({
+    }
 
-sender: currentUser.id,
 
-receiver: otherUserId,
+    sendButton.disabled = true;
 
-content: content
 
-});
+    const {
+      error
+    } = await supabaseClient
 
+      .from("messages")
 
-if (error) {
+      .insert({
 
-console.error(
-"Error enviando mensaje:",
-error
-);
+        sender: currentUser.id,
 
+        receiver: otherUserId,
 
-alert(
-"No se pudo enviar el mensaje."
-);
+        content: content
 
+      });
 
-sendButton.disabled = false;
 
-return;
+    if (error) {
 
-}
+      console.error(
+        "Error enviando:",
+        error
+      );
 
+      alert(
+        "No se pudo enviar el mensaje."
+      );
 
-/*
-NO añadimos manualmente el mensaje.
+      sendButton.disabled = false;
 
-Supabase Realtime lo enviará automáticamente
-y addMessageToScreen() lo mostrará.
-*/
+      return;
 
-messageInput.value = "";
+    }
 
 
-sendButton.disabled = false;
+    messageInput.value = "";
 
+    messageInput.focus();
 
-messageInput.focus();
+    sendButton.disabled = false;
 
-}
+  }
 
 
-/* =====================================================
-ENTER PARA ENVIAR
-===================================================== */
+  /* =========================================
+     EVENTOS
+  ========================================= */
 
-messageInput.addEventListener(
-"keydown",
-event => {
+  sendButton.addEventListener(
+    "click",
+    sendMessage
+  );
 
-if (
-event.key === "Enter" &&
-!event.shiftKey
-) {
 
-event.preventDefault();
+  messageInput.addEventListener(
+    "keydown",
+    event => {
 
-sendMessage();
+      if (
+        event.key === "Enter"
+      ) {
 
-}
+        event.preventDefault();
 
-}
-);
+        sendMessage();
 
+      }
 
-/* =====================================================
-BOTÓN ENVIAR
-===================================================== */
+    }
+  );
 
-sendButton.addEventListener(
-"click",
-sendMessage
-);
 
+  /* =========================================
+     SCROLL
+  ========================================= */
 
-/* =====================================================
-SCROLL
-===================================================== */
+  function scrollBottom() {
 
-function scrollToBottom() {
+    messagesContainer.scrollTop =
+      messagesContainer.scrollHeight;
 
-messagesContainer.scrollTop =
-messagesContainer.scrollHeight;
+  }
 
-}
 
+  /* =========================================
+     INICIAR
+  ========================================= */
 
-/* =====================================================
-INICIAR APP
-===================================================== */
+  async function init() {
 
-init();
+    currentUser =
+      await getCurrentUser();
+
+
+    if (!currentUser) {
+      return;
+    }
+
+
+    await findOtherUser();
+
+    await loadMessages();
+
+    startRealtime();
+
+  }
+
+
+  init();
 
 </script>
 
