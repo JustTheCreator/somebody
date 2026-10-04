@@ -53,8 +53,8 @@ font-weight: 600;
 
 .account-buttons {
 display: flex;
+flex-direction: column;
 gap: 15px;
-flex-wrap: wrap;
 margin-top: 30px;
 }
 
@@ -69,6 +69,7 @@ font-size: 16px;
 
 .message {
 margin-top: 20px;
+font-weight: 500;
 }
 
 </style>
@@ -208,6 +209,15 @@ Not set
 
 <button
 class="primary-button"
+id="profile-button"
+type="button"
+>
+Complete my profile
+</button>
+
+
+<button
+class="primary-button"
 id="find-button"
 type="button"
 >
@@ -258,16 +268,16 @@ class="message"
 
 
 const SUPABASE_URL =
-"https://arltyssfvxusgbczehwd.supabase.co";
+"PEGA_AQUI_TU_URL";
 
 
 const SUPABASE_PUBLISHABLE_KEY =
-"sb_publishable_6shqoWqM68h4HWe5FDae_Q_LBYXMPI5";
+"PEGA_AQUI_TU_PUBLISHABLE_KEY";
 
 
 
 /* ============================= */
-/* CREATE SUPABASE CLIENT */
+/* SUPABASE CLIENT */
 /* ============================= */
 
 
@@ -304,6 +314,10 @@ const interestElement =
 document.querySelector("#interest");
 
 
+const profileButton =
+document.querySelector("#profile-button");
+
+
 const findButton =
 document.querySelector("#find-button");
 
@@ -324,11 +338,7 @@ document.querySelector("#message");
 
 async function loadAccount() {
 
-
 try {
-
-
-/* GET CURRENT USER */
 
 const {
 data: {
@@ -341,9 +351,6 @@ await supabaseClient
 .getUser();
 
 
-
-/* NO USER */
-
 if (error || !user) {
 
 window.location.href =
@@ -354,15 +361,13 @@ return;
 }
 
 
-
 /* EMAIL */
 
 emailElement.textContent =
 user.email || "Not set";
 
 
-
-/* GET PROFILE */
+/* PROFILE */
 
 const {
 data: profile,
@@ -375,20 +380,17 @@ await supabaseClient
 .single();
 
 
-
-/* PROFILE ERROR */
-
 if (profileError) {
 
 console.error(profileError);
 
 usernameElement.textContent =
-user.user_metadata?.username || "Not set";
+user.user_metadata?.username ||
+"Not set";
 
 return;
 
 }
-
 
 
 /* USERNAME */
@@ -397,19 +399,16 @@ usernameElement.textContent =
 profile.username || "Not set";
 
 
-
 /* COUNTRY */
 
 countryElement.textContent =
 profile.country || "Not set";
 
 
-
 /* LANGUAGE */
 
 languageElement.textContent =
 profile.language || "Not set";
-
 
 
 /* INTEREST */
@@ -420,12 +419,9 @@ profile.interest || "Not set";
 
 }
 
-
 catch (error) {
 
-
 console.error(error);
-
 
 message.textContent =
 "There was a problem loading your account.";
@@ -433,11 +429,26 @@ message.textContent =
 message.style.color =
 "red";
 
+}
 
 }
 
 
+
+/* ============================= */
+/* COMPLETE PROFILE */
+/* ============================= */
+
+
+profileButton.addEventListener(
+"click",
+function() {
+
+window.location.href =
+"profile.html";
+
 }
+);
 
 
 
@@ -484,7 +495,6 @@ await supabaseClient
 .signOut();
 
 
-
 if (error) {
 
 console.error(error);
@@ -506,10 +516,8 @@ return;
 }
 
 
-
 window.location.href =
 "index.html";
-
 
 }
 );
