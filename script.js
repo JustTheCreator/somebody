@@ -5,7 +5,6 @@ const aiButton = document.querySelector("#ai-button");
 const startButton = document.querySelector("#start-button");
 
 
-
 /* TALK TO SOMEONE */
 
 if (talkButton) {
@@ -19,7 +18,6 @@ window.location.href = "talk.html";
 }
 
 
-
 /* TALK TO AI */
 
 if (aiButton) {
@@ -31,7 +29,6 @@ alert("The AI section is coming soon!");
 });
 
 }
-
 
 
 /* START TALKING */
