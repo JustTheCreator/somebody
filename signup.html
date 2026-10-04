@@ -230,20 +230,6 @@ throw new Error("The account could not be created.");
 const userId = data.user.id;
 
 
-/* Create profile */
-
-const { error: profileError } =
-await supabaseClient
-.from("profiles")
-.insert({
-
-id: userId,
-
-username: username
-
-});
-
-
 /* Check profile error */
 
 if (profileError) {
