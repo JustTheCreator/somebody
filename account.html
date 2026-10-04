@@ -58,6 +58,14 @@ gap: 15px;
 margin-top: 30px;
 }
 
+.profile-link {
+display: block;
+width: 100%;
+box-sizing: border-box;
+text-align: center;
+text-decoration: none;
+}
+
 .logout-button {
 padding: 14px 22px;
 border: 1px solid #ddd;
@@ -207,22 +215,20 @@ Not set
 <div class="account-buttons">
 
 
-<button
-class="primary-button"
-id="profile-button"
-type="button"
+<a
+href="profile.html"
+class="primary-button profile-link"
 >
 Complete my profile
-</button>
+</a>
 
 
-<button
-class="primary-button"
-id="find-button"
-type="button"
+<a
+href="talk.html"
+class="primary-button profile-link"
 >
 Find someone to talk to
-</button>
+</a>
 
 
 <button
@@ -268,16 +274,15 @@ class="message"
 
 
 const SUPABASE_URL =
-"PEGA_AQUI_TU_URL";
+"https://arltyssfvxusgbczehwd.supabase.co";
 
 
 const SUPABASE_PUBLISHABLE_KEY =
-"PEGA_AQUI_TU_PUBLISHABLE_KEY";
-
+"sb_publishable_6shqoWqM68h4HWe5FDae_Q_LBYXMPI5";
 
 
 /* ============================= */
-/* SUPABASE CLIENT */
+/* CREATE CLIENT */
 /* ============================= */
 
 
@@ -288,70 +293,24 @@ SUPABASE_PUBLISHABLE_KEY
 );
 
 
-
 /* ============================= */
-/* ELEMENTS */
-/* ============================= */
-
-
-const usernameElement =
-document.querySelector("#username");
-
-
-const emailElement =
-document.querySelector("#email");
-
-
-const countryElement =
-document.querySelector("#country");
-
-
-const languageElement =
-document.querySelector("#language");
-
-
-const interestElement =
-document.querySelector("#interest");
-
-
-const profileButton =
-document.querySelector("#profile-button");
-
-
-const findButton =
-document.querySelector("#find-button");
-
-
-const logoutButton =
-document.querySelector("#logout-button");
-
-
-const message =
-document.querySelector("#message");
-
-
-
-/* ============================= */
-/* LOAD ACCOUNT */
+/* LOAD USER */
 /* ============================= */
 
 
-async function loadAccount() {
+async function loadUser() {
 
 try {
 
-const {
-data: {
-user
-},
-error
-} =
-await supabaseClient
-.auth
-.getUser();
+const result =
+await supabaseClient.auth.getUser();
 
 
-if (error || !user) {
+const user =
+result.data.user;
+
+
+if (!user) {
 
 window.location.href =
 "login.html";
@@ -363,110 +322,78 @@ return;
 
 /* EMAIL */
 
-emailElement.textContent =
+document.querySelector("#email").textContent =
 user.email || "Not set";
-
-
-/* PROFILE */
-
-const {
-data: profile,
-error: profileError
-} =
-await supabaseClient
-.from("profiles")
-.select("*")
-.eq("id", user.id)
-.single();
-
-
-if (profileError) {
-
-console.error(profileError);
-
-usernameElement.textContent =
-user.user_metadata?.username ||
-"Not set";
-
-return;
-
-}
 
 
 /* USERNAME */
 
-usernameElement.textContent =
-profile.username || "Not set";
+const username =
+user.user_metadata?.username;
 
 
-/* COUNTRY */
+if (username) {
 
-countryElement.textContent =
-profile.country || "Not set";
+document.querySelector("#username").textContent =
+username;
 
+} else {
 
-/* LANGUAGE */
-
-languageElement.textContent =
-profile.language || "Not set";
-
-
-/* INTEREST */
-
-interestElement.textContent =
-profile.interest || "Not set";
-
+document.querySelector("#username").textContent =
+"Not set";
 
 }
 
-catch (error) {
+
+/* PROFILE */
+
+const profileResult =
+await supabaseClient
+.from("profiles")
+.select("country, language, interest")
+.eq("id", user.id)
+.maybeSingle();
+
+
+if (profileResult.data) {
+
+document.querySelector("#country").textContent =
+profileResult.data.country || "Not set";
+
+
+document.querySelector("#language").textContent =
+profileResult.data.language || "Not set";
+
+
+document.querySelector("#interest").textContent =
+profileResult.data.interest || "Not set";
+
+}
+
+
+} catch (error) {
 
 console.error(error);
 
-message.textContent =
-"There was a problem loading your account.";
 
-message.style.color =
+document.querySelector("#username").textContent =
+"Error";
+
+
+document.querySelector("#email").textContent =
+"Error";
+
+
+document.querySelector("#message").textContent =
+error.message;
+
+
+document.querySelector("#message").style.color =
 "red";
 
 }
 
 }
-
-
-
-/* ============================= */
-/* COMPLETE PROFILE */
-/* ============================= */
-
-
-profileButton.addEventListener(
-"click",
-function() {
-
-window.location.href =
-"profile.html";
-
-}
-);
-
-
-
-/* ============================= */
-/* FIND SOMEONE */
-/* ============================= */
-
-
-findButton.addEventListener(
-"click",
-function() {
-
-window.location.href =
-"talk.html";
-
-}
-);
-
 
 
 /* ============================= */
@@ -474,46 +401,16 @@ window.location.href =
 /* ============================= */
 
 
-logoutButton.addEventListener(
+document
+.querySelector("#logout-button")
+.addEventListener(
 "click",
 async function() {
 
 
-logoutButton.disabled =
-true;
-
-
-logoutButton.textContent =
-"Logging out...";
-
-
-const {
-error
-} =
 await supabaseClient
 .auth
 .signOut();
-
-
-if (error) {
-
-console.error(error);
-
-message.textContent =
-"Could not log out.";
-
-message.style.color =
-"red";
-
-logoutButton.disabled =
-false;
-
-logoutButton.textContent =
-"Log out";
-
-return;
-
-}
 
 
 window.location.href =
@@ -523,13 +420,12 @@ window.location.href =
 );
 
 
-
 /* ============================= */
 /* START */
 /* ============================= */
 
 
-loadAccount();
+loadUser();
 
 
 </script>
