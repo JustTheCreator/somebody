@@ -2,10 +2,15 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+>
+
 <title>TalkWorld - Chat</title>
 
 <style>
+
     * {
         box-sizing: border-box;
     }
@@ -37,7 +42,7 @@
     .back-button {
         border: none;
         background: transparent;
-        font-size: 24px;
+        font-size: 25px;
         cursor: pointer;
     }
 
@@ -47,7 +52,7 @@
     }
 
     .user-info p {
-        margin: 4px 0 0;
+        margin: 5px 0 0;
         color: #777;
         font-size: 14px;
     }
@@ -64,10 +69,10 @@
     .message {
         max-width: 75%;
         padding: 11px 15px;
-        border-radius: 16px;
+        border-radius: 17px;
         font-size: 15px;
         line-height: 1.4;
-        word-wrap: break-word;
+        word-break: break-word;
     }
 
     .sent {
@@ -100,6 +105,7 @@
 
     #message-input {
         flex: 1;
+        min-width: 0;
         border: 1px solid #ccc;
         border-radius: 22px;
         padding: 12px 16px;
@@ -119,30 +125,72 @@
 
     #send-button:disabled {
         opacity: 0.5;
-        cursor: not-allowed;
     }
+
+    .error {
+        padding: 15px 20px;
+        background: #fff0f0;
+        color: #b00020;
+        font-size: 14px;
+        line-height: 1.4;
+        display: none;
+    }
+
 </style>
 </head>
 <body>
 <div class="chat-container">
+<!-- HEADER -->
+
 <div class="header">
 
-    <button class="back-button" id="back-button">
+    <button
+        class="back-button"
+        id="back-button"
+        type="button"
+    >
         ←
     </button>
 
+
     <div class="user-info">
-        <h2 id="partner-name">Loading...</h2>
-        <p id="partner-info">TalkWorld</p>
+
+        <h2 id="partner-name">
+            Loading...
+        </h2>
+
+        <p id="partner-info">
+            TalkWorld
+        </p>
+
     </div>
 
 </div>
+
+
+<!-- ERROR -->
+
+<div
+    class="error"
+    id="error-message"
+></div>
+
+
+<!-- MESSAGES -->
 
 <div id="messages">
-    <div class="empty" id="empty-message">
+
+    <div
+        class="empty"
+        id="empty-message"
+    >
         No messages yet. Start the conversation! 👋
     </div>
+
 </div>
+
+
+<!-- INPUT -->
 
 <div class="input-area">
 
@@ -153,7 +201,10 @@
         autocomplete="off"
     >
 
-    <button id="send-button">
+    <button
+        id="send-button"
+        type="button"
+    >
         Send
     </button>
 
@@ -162,96 +213,194 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 
-const SUPABASE_URL = "https://arltyssfvxusgbczehwd.supabase.co";
 
-const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_6shqoWqM68h4HWe5FDae_Q_LBYXMPI5";
-
-
-const supabaseClient = supabase.createClient(
-    SUPABASE_URL,
-    SUPABASE_PUBLISHABLE_KEY
-);
+/* =====================================================
+   SUPABASE
+===================================================== */
 
 
-const partnerId = localStorage.getItem("talkworld_partner_id");
-
-const partnerUsername =
-    localStorage.getItem("talkworld_partner_username");
-
-const partnerCountry =
-    localStorage.getItem("talkworld_partner_country");
-
-const partnerLanguage =
-    localStorage.getItem("talkworld_partner_language");
+const SUPABASE_URL =
+    "https://arltyssfvxusgbczehwd.supabase.co";
 
 
-const partnerNameElement =
+const SUPABASE_PUBLISHABLE_KEY =
+    "sb_publishable_6shqoWqM68h4HWe5FDae_Q_LBYXMPI5";
+
+
+const supabaseClient =
+    supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_PUBLISHABLE_KEY
+    );
+
+
+/* =====================================================
+   ELEMENTS
+===================================================== */
+
+
+const partnerName =
     document.querySelector("#partner-name");
 
-const partnerInfoElement =
+
+const partnerInfo =
     document.querySelector("#partner-info");
 
-const messagesElement =
+
+const messagesContainer =
     document.querySelector("#messages");
 
-const input =
+
+const messageInput =
     document.querySelector("#message-input");
+
 
 const sendButton =
     document.querySelector("#send-button");
+
+
+const errorMessage =
+    document.querySelector("#error-message");
+
 
 const emptyMessage =
     document.querySelector("#empty-message");
 
 
+/* =====================================================
+   VARIABLES
+===================================================== */
+
+
 let currentUser = null;
 
+let partnerId = null;
 
-async function startChat() {
+let realtimeChannel = null;
+
+
+/* =====================================================
+   SHOW ERROR
+===================================================== */
+
+
+function showError(message) {
+
+    console.error(message);
+
+    errorMessage.textContent =
+        "Error: " + message;
+
+    errorMessage.style.display =
+        "block";
+}
+
+
+/* =====================================================
+   GET PARTNER
+===================================================== */
+
+
+function loadPartner() {
+
+    partnerId =
+        localStorage.getItem(
+            "talkworld_partner_id"
+        );
+
+
+    const username =
+        localStorage.getItem(
+            "talkworld_partner_username"
+        );
+
+
+    const country =
+        localStorage.getItem(
+            "talkworld_partner_country"
+        );
+
+
+    const language =
+        localStorage.getItem(
+            "talkworld_partner_language"
+        );
+
 
     if (!partnerId) {
 
-        alert("No conversation partner was found.");
+        showError(
+            "No conversation partner was found."
+        );
 
-        window.location.href = "talk.html";
+        setTimeout(function() {
 
-        return;
+            window.location.href =
+                "talk.html";
+
+        }, 2000);
+
+        return false;
     }
 
 
-    partnerNameElement.textContent =
-        partnerUsername || "TalkWorld user";
+    partnerName.textContent =
+        username || "TalkWorld user";
 
 
-    partnerInfoElement.textContent =
-        `${partnerCountry || ""} • ${partnerLanguage || ""}`;
+    partnerInfo.textContent =
+        `${country || "Unknown"} • ${language || "Unknown"}`;
 
+
+    return true;
+}
+
+
+/* =====================================================
+   GET CURRENT USER
+===================================================== */
+
+
+async function loadCurrentUser() {
 
     const {
-        data: {
-            user
-        },
+        data,
         error
-    } = await supabaseClient.auth.getUser();
+    } =
+        await supabaseClient.auth.getUser();
 
 
-    if (error || !user) {
+    if (error) {
 
-        alert("Please log in again.");
+        showError(
+            "Could not verify your login: " +
+            error.message
+        );
 
-        window.location.href = "login.html";
-
-        return;
+        return false;
     }
 
 
-    currentUser = user;
+    if (!data.user) {
+
+        window.location.href =
+            "login.html";
+
+        return false;
+    }
 
 
-    await loadMessages();
+    currentUser =
+        data.user;
 
-    subscribeToMessages();
+
+    return true;
 }
+
+
+/* =====================================================
+   LOAD MESSAGES
+===================================================== */
 
 
 async function loadMessages() {
@@ -259,33 +408,42 @@ async function loadMessages() {
     const {
         data,
         error
-    } = await supabaseClient
-        .from("messages")
-        .select("*")
-        .or(
-            `and(sender_id.eq.${currentUser.id},receiver_id.eq.${partnerId}),and(sender_id.eq.${partnerId},receiver_id.eq.${currentUser.id})`
-        )
-        .order("created_at", {
-            ascending: true
-        });
+    } =
+        await supabaseClient
+            .from("messages")
+            .select(
+                "id, sender_id, receiver_id, content, created_at"
+            )
+            .or(
+                `and(sender_id.eq.${currentUser.id},receiver_id.eq.${partnerId}),and(sender_id.eq.${partnerId},receiver_id.eq.${currentUser.id})`
+            )
+            .order(
+                "created_at",
+                {
+                    ascending: true
+                }
+            );
 
 
     if (error) {
 
-        console.error(error);
-
-        alert("Could not load messages.");
+        showError(
+            "Could not load messages: " +
+            error.message
+        );
 
         return;
     }
 
 
-    messagesElement.innerHTML = "";
+    messagesContainer.innerHTML = "";
 
 
     if (!data || data.length === 0) {
 
-        messagesElement.appendChild(emptyMessage);
+        messagesContainer.appendChild(
+            emptyMessage
+        );
 
         return;
     }
@@ -293,7 +451,7 @@ async function loadMessages() {
 
     data.forEach(function(message) {
 
-        displayMessage(message);
+        addMessageToScreen(message);
 
     });
 
@@ -302,155 +460,217 @@ async function loadMessages() {
 }
 
 
-function displayMessage(message) {
+/* =====================================================
+   ADD MESSAGE TO SCREEN
+===================================================== */
 
-    const div =
+
+function addMessageToScreen(message) {
+
+    const messageElement =
         document.createElement("div");
 
 
-    div.classList.add("message");
+    messageElement.classList.add(
+        "message"
+    );
 
 
-    if (message.sender_id === currentUser.id) {
+    if (
+        message.sender_id ===
+        currentUser.id
+    ) {
 
-        div.classList.add("sent");
+        messageElement.classList.add(
+            "sent"
+        );
 
     } else {
 
-        div.classList.add("received");
+        messageElement.classList.add(
+            "received"
+        );
 
     }
 
 
-    div.textContent =
+    messageElement.textContent =
         message.content;
 
 
-    messagesElement.appendChild(div);
+    messagesContainer.appendChild(
+        messageElement
+    );
 }
+
+
+/* =====================================================
+   SEND MESSAGE
+===================================================== */
 
 
 async function sendMessage() {
 
-    const text =
-        input.value.trim();
+    const content =
+        messageInput.value.trim();
 
 
-    if (!text) {
+    if (!content) {
         return;
     }
 
 
-    sendButton.disabled = true;
+    if (!currentUser || !partnerId) {
+
+        showError(
+            "The conversation is not ready yet."
+        );
+
+        return;
+    }
+
+
+    sendButton.disabled =
+        true;
 
 
     const {
         error
-    } = await supabaseClient
-        .from("messages")
-        .insert({
-            sender_id: currentUser.id,
-            receiver_id: partnerId,
-            content: text
-        });
+    } =
+        await supabaseClient
+            .from("messages")
+            .insert({
+                sender_id:
+                    currentUser.id,
+
+                receiver_id:
+                    partnerId,
+
+                content:
+                    content
+            });
 
 
     if (error) {
 
-        console.error(error);
+        showError(
+            "Could not send message: " +
+            error.message
+        );
 
-        alert("Could not send the message.");
-
-        sendButton.disabled = false;
+        sendButton.disabled =
+            false;
 
         return;
     }
 
 
-    input.value = "";
+    messageInput.value =
+        "";
 
-    sendButton.disabled = false;
+    messageInput.focus();
 
-    input.focus();
+
+    sendButton.disabled =
+        false;
 }
 
 
-function subscribeToMessages() {
-
-    supabaseClient
-        .channel("talkworld-messages")
-        .on(
-            "postgres_changes",
-            {
-                event: "INSERT",
-                schema: "public",
-                table: "messages"
-            },
-            function(payload) {
-
-                const message =
-                    payload.new;
+/* =====================================================
+   REALTIME
+===================================================== */
 
 
-                const belongsToConversation =
-                    (
-                        message.sender_id === currentUser.id &&
-                        message.receiver_id === partnerId
-                    )
-                    ||
-                    (
-                        message.sender_id === partnerId &&
-                        message.receiver_id === currentUser.id
+function startRealtime() {
+
+    realtimeChannel =
+        supabaseClient
+            .channel(
+                "talkworld-chat-" +
+                currentUser.id +
+                "-" +
+                partnerId
+            )
+            .on(
+                "postgres_changes",
+                {
+                    event: "INSERT",
+                    schema: "public",
+                    table: "messages"
+                },
+                function(payload) {
+
+                    const message =
+                        payload.new;
+
+
+                    const isOurConversation =
+                        (
+                            message.sender_id ===
+                            currentUser.id &&
+                            message.receiver_id ===
+                            partnerId
+                        )
+                        ||
+                        (
+                            message.sender_id ===
+                            partnerId &&
+                            message.receiver_id ===
+                            currentUser.id
+                        );
+
+
+                    if (!isOurConversation) {
+                        return;
+                    }
+
+
+                    if (
+                        emptyMessage.parentElement
+                    ) {
+
+                        emptyMessage.remove();
+
+                    }
+
+
+                    /*
+                     * Avoid showing our own message twice.
+                     * The database insert is already loaded
+                     * through realtime.
+                     */
+
+                    addMessageToScreen(
+                        message
                     );
 
+                    scrollToBottom();
 
-                if (!belongsToConversation) {
-                    return;
                 }
-
-
-                if (emptyMessage.parentElement) {
-                    emptyMessage.remove();
-                }
-
-
-                displayMessage(message);
-
-                scrollToBottom();
-            }
-        )
-        .subscribe();
+            )
+            .subscribe();
 }
+
+
+/* =====================================================
+   SCROLL
+===================================================== */
 
 
 function scrollToBottom() {
 
-    messagesElement.scrollTop =
-        messagesElement.scrollHeight;
+    messagesContainer.scrollTop =
+        messagesContainer.scrollHeight;
 }
 
 
-sendButton.addEventListener(
-    "click",
-    sendMessage
-);
+/* =====================================================
+   BACK BUTTON
+===================================================== */
 
 
-input.addEventListener(
-    "keydown",
-    function(event) {
-
-        if (event.key === "Enter") {
-
-            sendMessage();
-
-        }
-
-    }
-);
-
-
-document.querySelector("#back-button")
+document
+    .querySelector("#back-button")
     .addEventListener(
         "click",
         function() {
@@ -462,7 +682,75 @@ document.querySelector("#back-button")
     );
 
 
+/* =====================================================
+   SEND BUTTON
+===================================================== */
+
+
+sendButton.addEventListener(
+    "click",
+    sendMessage
+);
+
+
+/* =====================================================
+   ENTER KEY
+===================================================== */
+
+
+messageInput.addEventListener(
+    "keydown",
+    function(event) {
+
+        if (
+            event.key === "Enter"
+        ) {
+
+            event.preventDefault();
+
+            sendMessage();
+
+        }
+
+    }
+);
+
+
+/* =====================================================
+   START CHAT
+===================================================== */
+
+
+async function startChat() {
+
+    const partnerLoaded =
+        loadPartner();
+
+
+    if (!partnerLoaded) {
+        return;
+    }
+
+
+    const userLoaded =
+        await loadCurrentUser();
+
+
+    if (!userLoaded) {
+        return;
+    }
+
+
+    await loadMessages();
+
+
+    startRealtime();
+
+}
+
+
 startChat();
+
 
 </script>
 </body>
