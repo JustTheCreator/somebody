@@ -2,15 +2,12 @@
 <html lang="en">
 
 <head>
-
 <meta charset="UTF-8">
-
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>Create account - TalkWorld</title>
 
 <link rel="stylesheet" href="style.css">
-
 </head>
 
 <body>
@@ -22,11 +19,9 @@ TalkWorld
 </div>
 
 <nav>
-
 <a href="index.html">
 Home
 </a>
-
 </nav>
 
 </header>
@@ -126,6 +121,7 @@ id="message"
 style="
 margin-top: 20px;
 text-align: center;
+word-break: break-word;
 ">
 </p>
 
@@ -152,7 +148,7 @@ text-align: center;
 <script src="supabase.js"></script>
 
 
-<!-- ACCOUNT CREATION -->
+<!-- CREATE ACCOUNT -->
 
 <script>
 
@@ -165,101 +161,161 @@ document.querySelector("#message");
 
 signupButton.addEventListener("click", async function () {
 
-const username = document.querySelector("#username").value.trim();
-const email = document.querySelector("#email").value.trim();
-const password = document.querySelector("#password").value;
+const username =
+document.querySelector("#username").value.trim();
+
+const email =
+document.querySelector("#email").value.trim();
+
+const password =
+document.querySelector("#password").value;
+
 
 if (!username || !email || !password) {
-message.textContent = "Please fill in all fields.";
+
+message.textContent =
+"Please fill in all fields.";
+
 return;
 }
+
 
 if (password.length < 6) {
-message.textContent = "Password must be at least 6 characters.";
+
+message.textContent =
+"Password must be at least 6 characters.";
+
 return;
 }
 
-signupButton.disabled = true;
-signupButton.textContent = "Creating account...";
 
-message.textContent = "Connecting to TalkWorld...";
+signupButton.disabled = true;
+
+signupButton.textContent =
+"Creating account...";
+
+message.textContent =
+"Connecting to TalkWorld...";
+
 
 try {
 
-const signupPromise = supabaseClient.auth.signUp({
-email: email,
-password: password
-});
+if (!window.supabase) {
 
-const timeoutPromise = new Promise(function(resolve) {
-setTimeout(function() {
+throw new Error(
+"Supabase library did not load."
+);
+
+}
+
+
+if (!window.supabase.createClient) {
+
+throw new Error(
+"Supabase client is unavailable."
+);
+
+}
+
+
+if (!supabaseClient) {
+
+throw new Error(
+"Supabase client was not created."
+);
+
+}
+
+
+const result =
+await Promise.race([
+
+supabaseClient.auth.signUp({
+
+email: email,
+
+password: password
+
+}),
+
+new Promise(function (resolve) {
+
+setTimeout(function () {
+
 resolve({
 timeout: true
 });
-}, 10000);
-});
 
-const result = await Promise.race([
-signupPromise,
-timeoutPromise
+}, 10000);
+
+})
+
 ]);
+
 
 if (result.timeout) {
 
-message.textContent =
-"The connection to TalkWorld timed out. Please try again.";
+throw new Error(
+"Supabase connection timed out."
+);
 
-signupButton.disabled = false;
-signupButton.textContent = "Create account";
-
-return;
 }
 
+
 const data = result.data;
+
 const error = result.error;
+
 
 if (error) {
 
-message.textContent =
-"Supabase error: " + error.message;
+throw new Error(
+error.message
+);
 
-signupButton.disabled = false;
-signupButton.textContent = "Create account";
-
-return;
 }
+
 
 if (!data || !data.user) {
 
-message.textContent =
-"Supabase did not create the account.";
+throw new Error(
+"Supabase did not return a user."
+);
 
-signupButton.disabled = false;
-signupButton.textContent = "Create account";
-
-return;
 }
+
 
 const profileResult =
 await supabaseClient
 .from("profiles")
 .insert({
+
 id: data.user.id,
+
 username: username
+
 });
+
 
 if (profileResult.error) {
 
-console.error(profileResult.error);
+console.error(
+profileResult.error
+);
 
 message.textContent =
-"Account created, but the profile could not be saved.";
+"Account created, but profile error: " +
+profileResult.error.message;
 
 signupButton.disabled = false;
-signupButton.textContent = "Create account";
+
+signupButton.textContent =
+"Create account";
 
 return;
+
 }
+
 
 message.textContent =
 "Account created successfully! Check your email.";
@@ -269,18 +325,24 @@ signupButton.textContent =
 
 signupButton.disabled = true;
 
+
 } catch (error) {
 
 console.error(error);
 
 message.textContent =
-"Connection error: " + error.message;
+"ERROR: " + error.message;
 
 signupButton.disabled = false;
-signupButton.textContent = "Create account";
+
+signupButton.textContent =
+"Create account";
+
 }
 
 });
+
+</script>
 
 </body>
 
