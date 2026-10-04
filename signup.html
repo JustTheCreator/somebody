@@ -163,111 +163,103 @@ const message =
 document.querySelector("#message");
 
 
-signupButton.addEventListener(
-"click",
-async function () {
+signupButton.addEventListener("click", async function () {
 
-const username =
-document.querySelector("#username").value.trim();
-
-const email =
-document.querySelector("#email").value.trim();
-
-const password =
-document.querySelector("#password").value;
-
+const username = document.querySelector("#username").value.trim();
+const email = document.querySelector("#email").value.trim();
+const password = document.querySelector("#password").value;
 
 if (!username || !email || !password) {
-
-message.textContent =
-"Please fill in all fields.";
-
+message.textContent = "Please fill in all fields.";
 return;
 }
-
 
 if (password.length < 6) {
-
-message.textContent =
-"Password must be at least 6 characters.";
-
+message.textContent = "Password must be at least 6 characters.";
 return;
 }
 
-
 signupButton.disabled = true;
+signupButton.textContent = "Creating account...";
 
-signupButton.textContent =
-"Creating account...";
-
+message.textContent = "Connecting to TalkWorld...";
 
 try {
 
-const { data, error } =
-await supabaseClient.auth.signUp({
-
+const signupPromise = supabaseClient.auth.signUp({
 email: email,
-
 password: password
-
 });
 
+const timeoutPromise = new Promise(function(resolve) {
+setTimeout(function() {
+resolve({
+timeout: true
+});
+}, 10000);
+});
+
+const result = await Promise.race([
+signupPromise,
+timeoutPromise
+]);
+
+if (result.timeout) {
+
+message.textContent =
+"The connection to TalkWorld timed out. Please try again.";
+
+signupButton.disabled = false;
+signupButton.textContent = "Create account";
+
+return;
+}
+
+const data = result.data;
+const error = result.error;
 
 if (error) {
 
 message.textContent =
-error.message;
+"Supabase error: " + error.message;
 
 signupButton.disabled = false;
-
-signupButton.textContent =
-"Create account";
+signupButton.textContent = "Create account";
 
 return;
 }
 
-
-if (!data.user) {
+if (!data || !data.user) {
 
 message.textContent =
-"Something went wrong. Please try again.";
+"Supabase did not create the account.";
 
 signupButton.disabled = false;
-
-signupButton.textContent =
-"Create account";
+signupButton.textContent = "Create account";
 
 return;
 }
 
-
-const { error: profileError } =
+const profileResult =
 await supabaseClient
 .from("profiles")
 .insert({
-
 id: data.user.id,
-
 username: username
-
 });
 
+if (profileResult.error) {
 
-if (profileError) {
-
-console.error(profileError);
+console.error(profileResult.error);
 
 message.textContent =
 "Account created, but the profile could not be saved.";
 
 signupButton.disabled = false;
-
-signupButton.textContent =
-"Create account";
+signupButton.textContent = "Create account";
 
 return;
 }
-
 
 message.textContent =
 "Account created successfully! Check your email.";
@@ -277,25 +269,18 @@ signupButton.textContent =
 
 signupButton.disabled = true;
 
-
 } catch (error) {
 
 console.error(error);
 
 message.textContent =
-"Something went wrong. Please try again.";
+"Connection error: " + error.message;
 
 signupButton.disabled = false;
-
-signupButton.textContent =
-"Create account";
-
+signupButton.textContent = "Create account";
 }
 
-}
-);
-
-</script>
+});
 
 </body>
 
