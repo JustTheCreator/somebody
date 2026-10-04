@@ -10,16 +10,7 @@
 <link rel="stylesheet" href="style.css">
 
 <!-- Supabase -->
-<script>
-const SUPABASE_URL = "https://arltyssfvxusgbczehwd.supabase.co";
-const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_6shqoWqM68h4HWe5FDae_Q_LBYXMPI5";
-
-const supabaseClient = supabase.createClient(
-SUPABASE_URL,
-SUPABASE_PUBLISHABLE_KEY
-);
-</script>
-
+<script src="https://unpkg.com/@supabase/supabase-js@2"></script>
 
 <style>
 .signup-container {
@@ -101,8 +92,8 @@ required
 type="password"
 id="password"
 placeholder="Password"
-required
 minlength="6"
+required
 >
 
 <button
@@ -131,22 +122,19 @@ class="message"
 
 <script>
 
-const form = document.querySelector("#signup-form");
-const button = document.querySelector("#signup-button");
-const message = document.querySelector("#message");
+/* ============================= */
+/* SUPABASE CONFIGURATION */
+/* ============================= */
 
-form.addEventListener("submit", async function(event) {
+const SUPABASE_URL = "https://arltyssfvxusgbczehwd.supabase.co";
+const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_6shqoWqM68h4HWe5FDae_Q_LBYXMPI5";
 
-event.preventDefault();
 
-button.disabled = true;
-button.textContent = "Creating account...";
-message.textContent = "";
-message.style.color = "";
+/* ============================= */
+/* CREATE SUPABASE CLIENT */
+/* ============================= */
 
-const username = document.querySelector("#username").value.trim();
-const email = document.querySelector("#email").value.trim();
-const password = document.querySelector("#password").value;
+let supabaseClient = null;
 
 try {
 
@@ -158,50 +146,112 @@ if (!window.supabase.createClient) {
 throw new Error("Supabase createClient is unavailable.");
 }
 
-if (!window.supabaseClient) {
-throw new Error("supabaseClient was not created.");
+supabaseClient = window.supabase.createClient(
+SUPABASE_URL,
+SUPABASE_PUBLISHABLE_KEY
+);
+
+} catch (error) {
+
+console.error(error);
+
 }
 
-const result = await Promise.race([
 
-supabaseClient.auth.signUp({
+/* ============================= */
+/* SIGN UP */
+/* ============================= */
+
+const form = document.querySelector("#signup-form");
+const button = document.querySelector("#signup-button");
+const message = document.querySelector("#message");
+
+
+form.addEventListener("submit", async function(event) {
+
+event.preventDefault();
+
+button.disabled = true;
+button.textContent = "Creating account...";
+
+message.textContent = "";
+message.style.color = "";
+
+
+try {
+
+/* Check Supabase */
+
+if (!supabaseClient) {
+throw new Error("Supabase client was not created.");
+}
+
+
+/* Get information */
+
+const username =
+document.querySelector("#username").value.trim();
+
+const email =
+document.querySelector("#email").value.trim();
+
+const password =
+document.querySelector("#password").value;
+
+
+/* Create account */
+
+const { data, error } =
+await supabaseClient.auth.signUp({
+
 email: email,
+
 password: password
-}),
 
-new Promise(function(_, reject) {
-setTimeout(function() {
-reject(new Error("Supabase request timed out after 10 seconds."));
-}, 10000);
-})
+});
 
-]);
 
-const data = result.data;
-const error = result.error;
+/* Check error */
 
 if (error) {
 throw error;
 }
 
+
+/* Check user */
+
 if (!data || !data.user) {
-throw new Error("Account was not created.");
+throw new Error("The account could not be created.");
 }
+
+
+/* Get user ID */
 
 const userId = data.user.id;
 
-const profileResult = await supabaseClient
-.from("profiles")
-.insert([
-{
-id: userId,
-username: username
-}
-]);
 
-if (profileResult.error) {
-throw profileResult.error;
+/* Create profile */
+
+const { error: profileError } =
+await supabaseClient
+.from("profiles")
+.insert({
+
+id: userId,
+
+username: username
+
+});
+
+
+/* Check profile error */
+
+if (profileError) {
+throw profileError;
 }
+
+
+/* Success */
 
 message.textContent =
 "Account created successfully! Check your email to confirm your account.";
@@ -210,17 +260,21 @@ message.style.color = "green";
 
 button.textContent = "Account created";
 
+
 } catch (error) {
 
 console.error(error);
 
 message.textContent =
-"ERROR: " + (error.message || "Unknown error");
+"ERROR: " +
+(error.message || "Unknown error");
 
 message.style.color = "red";
 
 button.disabled = false;
+
 button.textContent = "Create account";
+
 }
 
 });
