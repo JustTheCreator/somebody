@@ -3,86 +3,75 @@
 
 <head>
 
-    <meta charset="UTF-8">
+<meta charset="UTF-8">
 
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
+<meta
+name="viewport"
+content="width=device-width, initial-scale=1.0"
+>
 
-    <title>My account - TalkWorld</title>
+<title>My Account - TalkWorld</title>
 
-    <link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="style.css">
 
-    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+<script src="https://unpkg.com/@supabase/supabase-js@2"></script>
 
-    <style>
+<style>
 
-        .account-container {
-            max-width: 700px;
-            margin: 70px auto;
-            padding: 40px 25px;
-            text-align: center;
-        }
+.account-container {
+max-width: 700px;
+margin: 70px auto;
+padding: 30px 25px;
+}
 
-        .account-card {
-            margin-top: 35px;
-            padding: 30px;
-            border: 1px solid #e5e5e5;
-            border-radius: 18px;
-            background: white;
-            text-align: left;
-        }
+.account-card {
+border: 1px solid #e5e5e5;
+border-radius: 18px;
+padding: 30px;
+margin-top: 30px;
+}
 
-        .account-row {
-            padding: 15px 0;
-            border-bottom: 1px solid #eeeeee;
-        }
+.profile-item {
+padding: 15px 0;
+border-bottom: 1px solid #eee;
+}
 
-        .account-row:last-child {
-            border-bottom: none;
-        }
+.profile-item:last-child {
+border-bottom: none;
+}
 
-        .account-label {
-            font-size: 13px;
-            color: #777;
-            margin-bottom: 5px;
-        }
+.profile-label {
+font-size: 13px;
+color: #777;
+margin-bottom: 5px;
+}
 
-        .account-value {
-            font-size: 17px;
-            font-weight: 600;
-        }
+.profile-value {
+font-size: 18px;
+font-weight: 600;
+}
 
-        .account-buttons {
-            margin-top: 30px;
-            display: flex;
-            gap: 15px;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
+.account-buttons {
+display: flex;
+gap: 15px;
+flex-wrap: wrap;
+margin-top: 30px;
+}
 
-        .logout-button {
-            padding: 13px 22px;
-            border: 1px solid #111;
-            background: white;
-            color: #111;
-            border-radius: 10px;
-            cursor: pointer;
-            font-size: 15px;
-        }
+.logout-button {
+padding: 14px 22px;
+border: 1px solid #ddd;
+background: white;
+border-radius: 10px;
+cursor: pointer;
+font-size: 16px;
+}
 
-        .logout-button:hover {
-            background: #111;
-            color: white;
-        }
+.message {
+margin-top: 20px;
+}
 
-        .message {
-            margin-top: 20px;
-            font-weight: 500;
-        }
-
-    </style>
+</style>
 
 </head>
 
@@ -92,17 +81,17 @@
 
 <header class="navbar">
 
-    <div class="logo">
-        TalkWorld
-    </div>
+<div class="logo">
+TalkWorld
+</div>
 
-    <nav>
+<nav>
 
-        <a href="index.html">
-            Home
-        </a>
+<a href="index.html">
+Home
+</a>
 
-    </nav>
+</nav>
 
 </header>
 
@@ -112,133 +101,136 @@
 
 <section class="account-container">
 
-    <p class="small-title">
-        YOUR TALKWORLD ACCOUNT
-    </p>
+
+<p class="small-title">
+MY ACCOUNT
+</p>
 
 
-    <h1>
-        Welcome 👋
-    </h1>
+<h1>
+Welcome to TalkWorld
+</h1>
 
 
-    <p>
-        This is your personal TalkWorld space.
-    </p>
+<p>
+Your profile
+</p>
 
 
-    <div class="account-card">
+<div class="account-card">
 
 
-        <div class="account-row">
+<div class="profile-item">
 
-            <div class="account-label">
-                Username
-            </div>
+<div class="profile-label">
+Username
+</div>
 
-            <div
-                class="account-value"
-                id="username"
-            >
-                Loading...
-            </div>
+<div
+class="profile-value"
+id="username"
+>
+Loading...
+</div>
 
-        </div>
-
-
-        <div class="account-row">
-
-            <div class="account-label">
-                Email
-            </div>
-
-            <div
-                class="account-value"
-                id="email"
-            >
-                Loading...
-            </div>
-
-        </div>
+</div>
 
 
-        <div class="account-row">
+<div class="profile-item">
 
-            <div class="account-label">
-                Country
-            </div>
+<div class="profile-label">
+Email
+</div>
 
-            <div
-                class="account-value"
-                id="country"
-            >
-                Not set
-            </div>
+<div
+class="profile-value"
+id="email"
+>
+Loading...
+</div>
 
-        </div>
-
-
-        <div class="account-row">
-
-            <div class="account-label">
-                Language
-            </div>
-
-            <div
-                class="account-value"
-                id="language"
-            >
-                Not set
-            </div>
-
-        </div>
+</div>
 
 
-        <div class="account-row">
+<div class="profile-item">
 
-            <div class="account-label">
-                Interest
-            </div>
+<div class="profile-label">
+Country
+</div>
 
-            <div
-                class="account-value"
-                id="interest"
-            >
-                Not set
-            </div>
+<div
+class="profile-value"
+id="country"
+>
+Not set
+</div>
 
-        </div>
-
-
-    </div>
+</div>
 
 
-    <div class="account-buttons">
+<div class="profile-item">
 
-        <button
-            class="primary-button"
-            id="find-button"
-            type="button"
-        >
-            Find someone
-        </button>
+<div class="profile-label">
+Language
+</div>
 
+<div
+class="profile-value"
+id="language"
+>
+Not set
+</div>
 
-        <button
-            class="logout-button"
-            id="logout-button"
-            type="button"
-        >
-            Log out
-        </button>
-
-    </div>
+</div>
 
 
-    <div
-        id="message"
-        class="message"
-    ></div>
+<div class="profile-item">
+
+<div class="profile-label">
+Interest
+</div>
+
+<div
+class="profile-value"
+id="interest"
+>
+Not set
+</div>
+
+</div>
+
+
+</div>
+
+
+<div class="account-buttons">
+
+
+<button
+class="primary-button"
+id="find-button"
+type="button"
+>
+Find someone to talk to
+</button>
+
+
+<button
+class="logout-button"
+id="logout-button"
+type="button"
+>
+Log out
+</button>
+
+
+</div>
+
+
+<div
+id="message"
+class="message"
+></div>
 
 
 </section>
@@ -249,9 +241,9 @@
 
 <footer>
 
-    <p>
-        © 2026 TalkWorld
-    </p>
+<p>
+© 2026 TalkWorld
+</p>
 
 </footer>
 
@@ -261,194 +253,271 @@
 
 
 /* ============================= */
-/* SUPABASE CONFIGURATION        */
+/* SUPABASE CONFIGURATION */
 /* ============================= */
 
 
 const SUPABASE_URL =
-    "https://arltyssfvxusgbczehwd.supabase.co";
+"https://arltyssfvxusgbczehwd.supabase.co";
 
 
 const SUPABASE_PUBLISHABLE_KEY =
-    "https://arltyssfvxusgbczehwd.supabase.co/rest/v1/";
+"sb_publishable_6shqoWqM68h4HWe5FDae_Q_LBYXMPI5";
 
 
 
 /* ============================= */
-/* CREATE SUPABASE CLIENT        */
+/* CREATE SUPABASE CLIENT */
 /* ============================= */
 
 
 const supabaseClient =
-    window.supabase.createClient(
-        SUPABASE_URL,
-        SUPABASE_PUBLISHABLE_KEY
-    );
+window.supabase.createClient(
+SUPABASE_URL,
+SUPABASE_PUBLISHABLE_KEY
+);
 
 
 
 /* ============================= */
-/* ELEMENTS                      */
+/* ELEMENTS */
 /* ============================= */
 
 
 const usernameElement =
-    document.querySelector("#username");
+document.querySelector("#username");
 
 
 const emailElement =
-    document.querySelector("#email");
+document.querySelector("#email");
 
 
 const countryElement =
-    document.querySelector("#country");
+document.querySelector("#country");
 
 
 const languageElement =
-    document.querySelector("#language");
+document.querySelector("#language");
 
 
 const interestElement =
-    document.querySelector("#interest");
-
-
-const messageElement =
-    document.querySelector("#message");
-
-
-const logoutButton =
-    document.querySelector("#logout-button");
+document.querySelector("#interest");
 
 
 const findButton =
-    document.querySelector("#find-button");
+document.querySelector("#find-button");
+
+
+const logoutButton =
+document.querySelector("#logout-button");
+
+
+const message =
+document.querySelector("#message");
 
 
 
 /* ============================= */
-/* LOAD ACCOUNT                  */
+/* LOAD ACCOUNT */
 /* ============================= */
 
 
 async function loadAccount() {
 
 
-    const {
-        data: {
-            user
-        }
-    } =
-        await supabaseClient.auth.getUser();
+try {
 
 
-    /* No logged-in user */
+/* GET CURRENT USER */
 
-    if (!user) {
-
-        window.location.href =
-            "login.html";
-
-        return;
-
-    }
-
-
-    /* Show email */
-
-    emailElement.textContent =
-        user.email || "Not available";
+const {
+data: {
+user
+},
+error
+} =
+await supabaseClient
+.auth
+.getUser();
 
 
-    /* Get profile */
 
-    const {
-        data: profile,
-        error
-    } =
-        await supabaseClient
-            .from("profiles")
-            .select("*")
-            .eq("id", user.id)
-            .single();
+/* NO USER */
 
+if (error || !user) {
 
-    if (error) {
+window.location.href =
+"login.html";
 
-        console.error(error);
+return;
 
-        messageElement.textContent =
-            "Could not load your profile.";
-
-        messageElement.style.color =
-            "red";
-
-        return;
-
-    }
+}
 
 
-    /* Show profile information */
 
-    usernameElement.textContent =
-        profile.username || "Not set";
+/* EMAIL */
 
-
-    countryElement.textContent =
-        profile.country || "Not set";
+emailElement.textContent =
+user.email || "Not set";
 
 
-    languageElement.textContent =
-        profile.language || "Not set";
+
+/* GET PROFILE */
+
+const {
+data: profile,
+error: profileError
+} =
+await supabaseClient
+.from("profiles")
+.select("*")
+.eq("id", user.id)
+.single();
 
 
-    interestElement.textContent =
-        profile.interest || "Not set";
+
+/* PROFILE ERROR */
+
+if (profileError) {
+
+console.error(profileError);
+
+usernameElement.textContent =
+user.user_metadata?.username || "Not set";
+
+return;
+
+}
+
+
+
+/* USERNAME */
+
+usernameElement.textContent =
+profile.username || "Not set";
+
+
+
+/* COUNTRY */
+
+countryElement.textContent =
+profile.country || "Not set";
+
+
+
+/* LANGUAGE */
+
+languageElement.textContent =
+profile.language || "Not set";
+
+
+
+/* INTEREST */
+
+interestElement.textContent =
+profile.interest || "Not set";
+
+
+}
+
+
+catch (error) {
+
+
+console.error(error);
+
+
+message.textContent =
+"There was a problem loading your account.";
+
+message.style.color =
+"red";
+
+
+}
+
 
 }
 
 
 
 /* ============================= */
-/* LOG OUT                       */
-/* ============================= */
-
-
-logoutButton.addEventListener(
-    "click",
-    async function() {
-
-
-        await supabaseClient.auth.signOut();
-
-
-        window.location.href =
-            "index.html";
-
-
-    }
-);
-
-
-
-/* ============================= */
-/* FIND SOMEONE                  */
+/* FIND SOMEONE */
 /* ============================= */
 
 
 findButton.addEventListener(
-    "click",
-    function() {
+"click",
+function() {
 
-        window.location.href =
-            "talk.html";
+window.location.href =
+"talk.html";
 
-    }
+}
 );
 
 
 
 /* ============================= */
-/* START                         */
+/* LOG OUT */
+/* ============================= */
+
+
+logoutButton.addEventListener(
+"click",
+async function() {
+
+
+logoutButton.disabled =
+true;
+
+
+logoutButton.textContent =
+"Logging out...";
+
+
+const {
+error
+} =
+await supabaseClient
+.auth
+.signOut();
+
+
+
+if (error) {
+
+console.error(error);
+
+message.textContent =
+"Could not log out.";
+
+message.style.color =
+"red";
+
+logoutButton.disabled =
+false;
+
+logoutButton.textContent =
+"Log out";
+
+return;
+
+}
+
+
+
+window.location.href =
+"index.html";
+
+
+}
+);
+
+
+
+/* ============================= */
+/* START */
 /* ============================= */
 
 
