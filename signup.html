@@ -9,7 +9,6 @@
 
 <link rel="stylesheet" href="style.css">
 
-<!-- Supabase -->
 <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
 
 <style>
@@ -53,20 +52,28 @@ font-weight: 500;
 <body>
 
 <header class="navbar">
-<div class="logo">TalkWorld</div>
+
+<div class="logo">
+TalkWorld
+</div>
 
 <nav>
 <a href="index.html">Home</a>
 </nav>
+
 </header>
 
 <main>
 
 <section class="signup-container">
 
-<p class="small-title">JOIN TALKWORLD</p>
+<p class="small-title">
+JOIN TALKWORLD
+</p>
 
-<h1>Create your account</h1>
+<h1>
+Create your account
+</h1>
 
 <p>
 Create your free TalkWorld account and start talking with people around the world.
@@ -116,7 +123,9 @@ class="message"
 </main>
 
 <footer>
-<p>© 2026 TalkWorld</p>
+<p>
+© 2026 TalkWorld
+</p>
 </footer>
 
 
@@ -127,6 +136,7 @@ class="message"
 /* ============================= */
 
 const SUPABASE_URL = "https://arltyssfvxusgbczehwd.supabase.co";
+
 const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_6shqoWqM68h4HWe5FDae_Q_LBYXMPI5";
 
 
@@ -134,28 +144,10 @@ const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_6shqoWqM68h4HWe5FDae_Q_LBYXMPI5
 /* CREATE SUPABASE CLIENT */
 /* ============================= */
 
-let supabaseClient = null;
-
-try {
-
-if (!window.supabase) {
-throw new Error("Supabase library did not load.");
-}
-
-if (!window.supabase.createClient) {
-throw new Error("Supabase createClient is unavailable.");
-}
-
-supabaseClient = window.supabase.createClient(
+const supabaseClient = window.supabase.createClient(
 SUPABASE_URL,
 SUPABASE_PUBLISHABLE_KEY
 );
-
-} catch (error) {
-
-console.error(error);
-
-}
 
 
 /* ============================= */
@@ -163,7 +155,9 @@ console.error(error);
 /* ============================= */
 
 const form = document.querySelector("#signup-form");
+
 const button = document.querySelector("#signup-button");
+
 const message = document.querySelector("#message");
 
 
@@ -172,22 +166,12 @@ form.addEventListener("submit", async function(event) {
 event.preventDefault();
 
 button.disabled = true;
+
 button.textContent = "Creating account...";
 
 message.textContent = "";
-message.style.color = "";
-
 
 try {
-
-/* Check Supabase */
-
-if (!supabaseClient) {
-throw new Error("Supabase client was not created.");
-}
-
-
-/* Get information */
 
 const username =
 document.querySelector("#username").value.trim();
@@ -206,54 +190,41 @@ await supabaseClient.auth.signUp({
 
 email: email,
 
-password: password
+password: password,
+
+options: {
+
+data: {
+username: username
+}
+
+}
 
 });
 
-
-/* Check error */
 
 if (error) {
 throw error;
 }
 
 
-/* Check user */
-
-if (!data || !data.user) {
-throw new Error("The account could not be created.");
-}
-
-
-/* Get user ID */
-
-const userId = data.user.id;
-
-
-/* Check profile error */
-
-if (profileError) {
-throw profileError;
-}
-
-
 /* Success */
 
 message.textContent =
-"Account created successfully! Check your email to confirm your account.";
+"Account created! Check your email to confirm your account.";
 
 message.style.color = "green";
 
 button.textContent = "Account created";
 
+}
 
-} catch (error) {
+catch (error) {
 
 console.error(error);
 
 message.textContent =
-"ERROR: " +
-(error.message || "Unknown error");
+"ERROR: " + error.message;
 
 message.style.color = "red";
 
@@ -268,4 +239,5 @@ button.textContent = "Create account";
 </script>
 
 </body>
+
 </html>
