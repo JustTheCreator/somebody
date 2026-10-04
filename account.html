@@ -426,7 +426,30 @@ window.location.href =
 
 
 loadUser();
-alert("ACCOUNT JAVASCRIPT IS WORKING");
+supabaseClient.auth.getUser()
+.then(function(result) {
+
+if (result.error) {
+
+alert("SUPABASE ERROR: " + result.error.message);
+
+} else if (!result.data.user) {
+
+alert("NO USER FOUND");
+
+} else {
+
+alert("SUPABASE CONNECTED: " + result.data.user.email);
+
+}
+
+})
+.catch(function(error) {
+
+alert("ERROR: " + error.message);
+
+});
+
 
 
 </script>
