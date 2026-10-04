@@ -1,524 +1,378 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
-<meta charset="UTF-8">
-
-<meta
-name="viewport"
-content="width=device-width, initial-scale=1.0"
->
-
-<title>Complete your profile - TalkWorld</title>
-
-<link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Complete Profile - TalkWorld</title>
 
 <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
 
 <style>
+    body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background: #f7f7f7;
+        color: #111;
+    }
 
-.profile-container {
-max-width: 600px;
-margin: 60px auto;
-padding: 30px 25px;
-}
+    .container {
+        max-width: 600px;
+        margin: 50px auto;
+        padding: 30px;
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+    }
 
-.profile-form {
-display: flex;
-flex-direction: column;
-gap: 20px;
-margin-top: 30px;
-}
+    h1 {
+        margin-bottom: 10px;
+    }
 
-.profile-form label {
-font-weight: 600;
-}
+    .subtitle {
+        color: #666;
+        margin-bottom: 30px;
+    }
 
-.profile-form select {
-width: 100%;
-padding: 15px;
-font-size: 16px;
-border: 1px solid #ddd;
-border-radius: 10px;
-background: white;
-box-sizing: border-box;
-}
+    label {
+        display: block;
+        margin-top: 20px;
+        margin-bottom: 8px;
+        font-weight: 600;
+    }
 
-.message {
-margin-top: 20px;
-font-weight: 600;
-line-height: 1.5;
-}
+    input,
+    select {
+        width: 100%;
+        box-sizing: border-box;
+        padding: 14px;
+        border: 1px solid #ddd;
+        border-radius: 10px;
+        font-size: 16px;
+        background: white;
+    }
 
+    button {
+        width: 100%;
+        padding: 15px;
+        margin-top: 25px;
+        border: none;
+        border-radius: 12px;
+        background: #111;
+        color: white;
+        font-size: 16px;
+        cursor: pointer;
+    }
+
+    button:disabled {
+        opacity: 0.6;
+    }
+
+    #message {
+        margin-top: 20px;
+        text-align: center;
+    }
 </style>
-
 </head>
-
-
 <body>
+<div class="container">
+<h1>YOUR PROFILE</h1>
 
-
-<header class="navbar">
-
-<div class="logo">
-TalkWorld
-</div>
-
-<nav>
-
-<a href="index.html">
-Home
-</a>
-
-</nav>
-
-</header>
-
-
-<main>
-
-<section class="profile-container">
-
-
-<p class="small-title">
-YOUR PROFILE
+<p class="subtitle">
+    Tell us a little about yourself
 </p>
 
+<form id="profile-form">
 
-<h1>
-Tell us a little about yourself
-</h1>
+    <label for="username">
+        Username
+    </label>
 
-
-<p>
-This information will help TalkWorld find people
-you may enjoy talking to.
-</p>
-
-
-<form
-class="profile-form"
-id="profile-form"
->
+    <input
+        type="text"
+        id="username"
+        placeholder="Choose your username"
+        maxlength="30"
+        required
+    >
 
 
-<label for="country">
-Country
-</label>
+    <label for="country">
+        Country
+    </label>
+
+    <select id="country" required>
+        <option value="">Select your country</option>
+        <option value="Spain">Spain</option>
+        <option value="France">France</option>
+        <option value="United Kingdom">United Kingdom</option>
+        <option value="United States">United States</option>
+        <option value="Germany">Germany</option>
+        <option value="Italy">Italy</option>
+        <option value="Portugal">Portugal</option>
+        <option value="Brazil">Brazil</option>
+        <option value="Argentina">Argentina</option>
+        <option value="Mexico">Mexico</option>
+        <option value="Japan">Japan</option>
+        <option value="South Korea">South Korea</option>
+        <option value="Other">Other</option>
+    </select>
 
 
-<select
-id="country"
-required
->
+    <label for="language">
+        Language you speak
+    </label>
 
-<option value="">
-Select your country
-</option>
-
-<option value="Spain">
-🇪🇸 Spain
-</option>
-
-<option value="France">
-🇫🇷 France
-</option>
-
-<option value="United Kingdom">
-🇬🇧 United Kingdom
-</option>
-
-<option value="United States">
-🇺🇸 United States
-</option>
-
-<option value="Germany">
-🇩🇪 Germany
-</option>
-
-<option value="Italy">
-🇮🇹 Italy
-</option>
-
-<option value="Portugal">
-🇵🇹 Portugal
-</option>
-
-<option value="Brazil">
-🇧🇷 Brazil
-</option>
-
-<option value="Mexico">
-🇲🇽 Mexico
-</option>
-
-<option value="Argentina">
-🇦🇷 Argentina
-</option>
-
-<option value="Japan">
-🇯🇵 Japan
-</option>
-
-<option value="Other">
-🌎 Other
-</option>
-
-</select>
+    <select id="language" required>
+        <option value="">Select your language</option>
+        <option value="Spanish">Spanish</option>
+        <option value="English">English</option>
+        <option value="French">French</option>
+        <option value="German">German</option>
+        <option value="Italian">Italian</option>
+        <option value="Portuguese">Portuguese</option>
+        <option value="Japanese">Japanese</option>
+        <option value="Korean">Korean</option>
+        <option value="Chinese">Chinese</option>
+        <option value="Arabic">Arabic</option>
+        <option value="Other">Other</option>
+    </select>
 
 
+    <label for="interest">
+        What are you interested in?
+    </label>
 
-<label for="language">
-Language you speak
-</label>
-
-
-<select
-id="language"
-required
->
-
-<option value="">
-Select your language
-</option>
-
-<option value="Spanish">
-🇪🇸 Spanish
-</option>
-
-<option value="English">
-🇬🇧 English
-</option>
-
-<option value="French">
-🇫🇷 French
-</option>
-
-<option value="German">
-🇩🇪 German
-</option>
-
-<option value="Italian">
-🇮🇹 Italian
-</option>
-
-<option value="Portuguese">
-🇵🇹 Portuguese
-</option>
-
-<option value="Japanese">
-🇯🇵 Japanese
-</option>
-
-<option value="Chinese">
-🇨🇳 Chinese
-</option>
-
-<option value="Arabic">
-🇸🇦 Arabic
-</option>
-
-<option value="Other">
-🌎 Other
-</option>
-
-</select>
+    <select id="interest" required>
+        <option value="">Select an interest</option>
+        <option value="Travel">Travel</option>
+        <option value="Music">Music</option>
+        <option value="Gaming">Gaming</option>
+        <option value="Sports">Sports</option>
+        <option value="Movies">Movies</option>
+        <option value="Anime">Anime</option>
+        <option value="Technology">Technology</option>
+        <option value="Languages">Languages</option>
+        <option value="Culture">Culture</option>
+        <option value="Just talking">Just talking</option>
+    </select>
 
 
-
-<label for="interest">
-What are you interested in?
-</label>
-
-
-<select
-id="interest"
-required
->
-
-<option value="">
-Select an interest
-</option>
-
-<option value="Gaming">
-🎮 Gaming
-</option>
-
-<option value="Travel">
-✈️ Travel
-</option>
-
-<option value="Music">
-🎵 Music
-</option>
-
-<option value="Movies">
-🎬 Movies
-</option>
-
-<option value="Sports">
-⚽ Sports
-</option>
-
-<option value="Technology">
-💻 Technology
-</option>
-
-<option value="Just talking">
-💬 Just talking
-</option>
-
-</select>
-
-
-
-<button
-type="submit"
-class="primary-button"
-id="save-button"
->
-Save profile
-</button>
-
+    <button id="save-button" type="submit">
+        Save profile
+    </button>
 
 </form>
 
-
-<div
-id="message"
-class="message"
-></div>
-
-
-</section>
-
-</main>
-
-
-<footer>
-
-<p>
-© 2026 TalkWorld
-</p>
-
-</footer>
-
-
+<div id="message"></div>
+</div>
 <script>
 
-
-/* ============================= */
-/* SUPABASE */
-/* ============================= */
-
-
-const SUPABASE_URL =
-"https://arltyssfvxusgbczehwd.supabase.co";
-
+const SUPABASE_URL = "https://arltyssfvxusgbczehwd.supabase.co";
 
 const SUPABASE_PUBLISHABLE_KEY =
-"sb_publishable_6shqoWqM68h4HWe5FDae_Q_LBYXMPI5";
-
+    "sb_publishable_6shqoWqM68h4HWe5FDae_Q_LBYXMPI5";
 
 const supabaseClient =
-window.supabase.createClient(
-SUPABASE_URL,
-SUPABASE_PUBLISHABLE_KEY
-);
-
-
-/* ============================= */
-/* ELEMENTS */
-/* ============================= */
+    window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_PUBLISHABLE_KEY
+    );
 
 
 const form =
-document.querySelector("#profile-form");
-
+    document.querySelector("#profile-form");
 
 const saveButton =
-document.querySelector("#save-button");
-
+    document.querySelector("#save-button");
 
 const message =
-document.querySelector("#message");
+    document.querySelector("#message");
 
 
-/* ============================= */
-/* SAVE PROFILE */
-/* ============================= */
+async function loadProfile() {
+
+    try {
+
+        const {
+            data: {
+                user
+            },
+            error: userError
+        } = await supabaseClient.auth.getUser();
+
+        if (userError) {
+            throw userError;
+        }
+
+        if (!user) {
+            window.location.href = "login.html";
+            return;
+        }
+
+
+        const {
+            data: profile,
+            error: profileError
+        } = await supabaseClient
+            .from("profiles")
+            .select("username, country, language, interest")
+            .eq("id", user.id)
+            .maybeSingle();
+
+        if (profileError) {
+            throw profileError;
+        }
+
+
+        if (profile) {
+
+            document.querySelector("#username").value =
+                profile.username || "";
+
+            document.querySelector("#country").value =
+                profile.country || "";
+
+            document.querySelector("#language").value =
+                profile.language || "";
+
+            document.querySelector("#interest").value =
+                profile.interest || "";
+        }
+
+    }
+
+    catch (error) {
+
+        console.error(error);
+
+        message.textContent =
+            error.message;
+
+        message.style.color = "red";
+    }
+}
 
 
 form.addEventListener(
-"submit",
-async function(event) {
+    "submit",
+    async function(event) {
 
-event.preventDefault();
+        event.preventDefault();
 
+        saveButton.disabled = true;
 
-saveButton.disabled = true;
+        saveButton.textContent = "Saving...";
 
-saveButton.textContent =
-"Saving...";
-
-message.textContent = "";
+        message.textContent = "";
 
 
-try {
+        try {
+
+            const {
+                data: {
+                    user
+                },
+                error: userError
+            } = await supabaseClient.auth.getUser();
 
 
-/* GET CURRENT USER */
-
-const {
-data: {
-user
-},
-error: userError
-} =
-await supabaseClient
-.auth
-.getUser();
+            if (userError) {
+                throw userError;
+            }
 
 
-if (userError) {
-
-throw new Error(
-"USER ERROR: " +
-userError.message
-);
-
-}
+            if (!user) {
+                window.location.href = "login.html";
+                return;
+            }
 
 
-if (!user) {
+            const username =
+                document.querySelector("#username").value.trim();
 
-throw new Error(
-"NO LOGGED-IN USER"
-);
+            const country =
+                document.querySelector("#country").value;
 
-}
+            const language =
+                document.querySelector("#language").value;
 
-
-/* GET VALUES */
-
-const country =
-document
-.querySelector("#country")
-.value;
+            const interest =
+                document.querySelector("#interest").value;
 
 
-const language =
-document
-.querySelector("#language")
-.value;
+            if (!username) {
+                throw new Error(
+                    "Please choose a username."
+                );
+            }
 
 
-const interest =
-document
-.querySelector("#interest")
-.value;
+            const {
+                data,
+                error
+            } = await supabaseClient
+                .from("profiles")
+                .update({
+                    username: username,
+                    country: country,
+                    language: language,
+                    interest: interest
+                })
+                .eq("id", user.id)
+                .select();
 
 
-/* UPDATE */
-
-const {
-data,
-error
-} =
-await supabaseClient
-.from("profiles")
-.update({
-
-country: country,
-
-language: language,
-
-interest: interest
-
-})
-.eq(
-"id",
-user.id
-)
-.select();
+            if (error) {
+                throw error;
+            }
 
 
-if (error) {
+            if (!data || data.length === 0) {
 
-throw new Error(
-"DATABASE ERROR: " +
-error.message
-);
-
-}
+                throw new Error(
+                    "Your profile could not be updated."
+                );
+            }
 
 
-if (!data || data.length === 0) {
+            message.textContent =
+                "Profile saved successfully!";
 
-throw new Error(
-"NO PROFILE WAS UPDATED. " +
-"The profile ID may not match the logged-in user."
-);
+            message.style.color = "green";
 
-}
+            saveButton.textContent = "Saved!";
 
 
-/* SUCCESS */
+            setTimeout(function() {
 
-message.textContent =
-"Profile saved successfully!";
+                window.location.href =
+                    "account.html";
 
-message.style.color =
-"green";
+            }, 1000);
 
+        }
 
-saveButton.textContent =
-"Saved!";
+        catch (error) {
 
+            console.error(error);
 
-setTimeout(
-function() {
+            message.textContent =
+                error.message;
 
-window.location.href =
-"account.html";
+            message.style.color = "red";
 
-},
-1200
+            saveButton.disabled = false;
+
+            saveButton.textContent =
+                "Save profile";
+        }
+
+    }
 );
 
 
-}
-
-catch (error) {
-
-
-console.error(error);
-
-
-message.textContent =
-error.message;
-
-
-message.style.color =
-"red";
-
-
-saveButton.disabled =
-false;
-
-
-saveButton.textContent =
-"Save profile";
-
-}
-
-}
-);
+loadProfile();
 
 </script>
-
-
 </body>
-
 </html>
