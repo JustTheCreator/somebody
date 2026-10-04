@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -93,6 +94,7 @@
 
     #sendButton:disabled {
       opacity: 0.5;
+      cursor: not-allowed;
     }
 
     #status {
@@ -149,6 +151,17 @@
 
 
   /* =========================================
+     IDs DE LAS DOS CUENTAS DE PRUEBA
+  ========================================= */
+
+  const CUENTA_1 =
+    "e073bd76-bd12-410c-82b3-a26dd6d4186c";
+
+  const CUENTA_2 =
+    "0bf4d60b-e75b-495e-b3ee-365d7aead2d2";
+
+
+  /* =========================================
      ELEMENTOS
   ========================================= */
 
@@ -175,7 +188,7 @@
 
 
   /* =========================================
-     OBTENER USUARIO
+     OBTENER USUARIO ACTUAL
   ========================================= */
 
   async function getCurrentUser() {
@@ -185,7 +198,19 @@
       error
     } = await supabaseClient.auth.getUser();
 
-    if (error || !data.user) {
+    if (error) {
+
+      console.error(
+        "Error obteniendo usuario:",
+        error
+      );
+
+      window.location.href = "login.html";
+
+      return null;
+    }
+
+    if (!data.user) {
 
       window.location.href = "login.html";
 
@@ -197,78 +222,50 @@
 
 
   /* =========================================
-     ENCONTRAR AUTOMÁTICAMENTE AL OTRO USUARIO
+     DETERMINAR CON QUIÉN HABLAR
   ========================================= */
 
-  async function findOtherUser() {
+  function findOtherUser() {
 
-    /*
-      Buscamos mensajes enviados por el usuario actual.
-    */
-
-    const {
-      data: sentMessages,
-      error: sentError
-    } = await supabaseClient
-
-      .from("messages")
-
-      .select("sender, receiver")
-
-      .eq("sender", currentUser.id)
-
-      .limit(1);
-
-
-    if (
-      !sentError &&
-      sentMessages &&
-      sentMessages.length > 0
-    ) {
-
-      otherUserId =
-        sentMessages[0].receiver;
-
-      return;
-
+    if (!currentUser) {
+      return false;
     }
 
 
     /*
-      Si todavía no ha enviado mensajes,
-      buscamos mensajes que haya recibido.
+      Si estamos usando la CUENTA 1,
+      la otra cuenta es la CUENTA 2.
     */
 
-    const {
-      data: receivedMessages,
-      error: receivedError
-    } = await supabaseClient
+    if (currentUser.id === CUENTA_1) {
 
-      .from("messages")
+      otherUserId = CUENTA_2;
 
-      .select("sender, receiver")
-
-      .eq("receiver", currentUser.id)
-
-      .limit(1);
-
-
-    if (
-      !receivedError &&
-      receivedMessages &&
-      receivedMessages.length > 0
-    ) {
-
-      otherUserId =
-        receivedMessages[0].sender;
-
-      return;
-
+      return true;
     }
 
+
+    /*
+      Si estamos usando la CUENTA 2,
+      la otra cuenta es la CUENTA 1.
+    */
+
+    if (currentUser.id === CUENTA_2) {
+
+      otherUserId = CUENTA_1;
+
+      return true;
+    }
+
+
+    /*
+      Si el usuario no pertenece a las
+      dos cuentas de prueba.
+    */
 
     otherUserId = null;
 
+    return false;
   }
 
 
@@ -281,10 +278,9 @@
     if (!otherUserId) {
 
       status.textContent =
-        "No se ha encontrado una conversación.";
+        "No se ha seleccionado el usuario.";
 
       return;
-
     }
 
 
@@ -317,7 +313,6 @@
         "Error cargando la conversación.";
 
       return;
-
     }
 
 
@@ -336,7 +331,6 @@
 
     status.textContent =
       "En línea";
-
   }
 
 
@@ -353,7 +347,6 @@
     ) {
 
       return;
-
     }
 
 
@@ -364,10 +357,6 @@
     element.classList.add("message");
 
 
-    /*
-      AQUÍ distinguimos al remitente.
-    */
-
     if (
       message.sender === currentUser.id
     ) {
@@ -377,7 +366,6 @@
     } else {
 
       element.classList.add("theirs");
-
     }
 
 
@@ -395,7 +383,6 @@
 
 
     scrollBottom();
-
   }
 
 
@@ -407,7 +394,9 @@
 
     supabaseClient
 
-      .channel("talkworld-chat")
+      .channel(
+        "talkworld-chat-" + currentUser.id
+      )
 
       .on(
 
@@ -424,11 +413,6 @@
           const message =
             payload.new;
 
-
-          /*
-            Solo mostramos mensajes de
-            nuestra conversación.
-          */
 
           const belongsToConversation =
 
@@ -450,7 +434,6 @@
           ) {
 
             showMessage(message);
-
           }
 
         }
@@ -469,7 +452,6 @@
         }
 
       );
-
   }
 
 
@@ -488,138 +470,18 @@
     }
 
 
-    if (!otherUserId) {
-
-      await findOtherUser();
-
-
-      if (!otherUserId) {
-
-        alert(
-          "Todavía no se ha encontrado la otra cuenta."
-        );
-
-        return;
-
-      }
-
-    }
-
-
-    sendButton.disabled = true;
-
-
-    const {
-      error
-    } = await supabaseClient
-
-      .from("messages")
-
-      .insert({
-
-        sender: currentUser.id,
-
-        receiver: otherUserId,
-
-        content: content
-
-      });
-
-
-    if (error) {
-
-      console.error(
-        "Error enviando:",
-        error
-      );
+    if (!currentUser) {
 
       alert(
-        "No se pudo enviar el mensaje."
+        "No se ha encontrado tu usuario."
       );
 
-      sendButton.disabled = false;
-
-      return;
-
-    }
-
-
-    messageInput.value = "";
-
-    messageInput.focus();
-
-    sendButton.disabled = false;
-
-  }
-
-
-  /* =========================================
-     EVENTOS
-  ========================================= */
-
-  sendButton.addEventListener(
-    "click",
-    sendMessage
-  );
-
-
-  messageInput.addEventListener(
-    "keydown",
-    event => {
-
-      if (
-        event.key === "Enter"
-      ) {
-
-        event.preventDefault();
-
-        sendMessage();
-
-      }
-
-    }
-  );
-
-
-  /* =========================================
-     SCROLL
-  ========================================= */
-
-  function scrollBottom() {
-
-    messagesContainer.scrollTop =
-      messagesContainer.scrollHeight;
-
-  }
-
-
-  /* =========================================
-     INICIAR
-  ========================================= */
-
-  async function init() {
-
-    currentUser =
-      await getCurrentUser();
-
-
-    if (!currentUser) {
       return;
     }
 
 
-    await findOtherUser();
+    if (!otherUserId) {
 
-    await loadMessages();
-
-    startRealtime();
-
-  }
-
-
-  init();
-
-</script>
-
-</body>
-</html>
+      alert(
+        "No se ha seleccionado el usuario con e
+```
