@@ -8,6 +8,38 @@
 <title>Talk to someone - TalkWorld</title>
 
 <link rel="stylesheet" href="style.css">
+
+<style>
+
+    /* SELECTED OPTION */
+
+    .option-button.selected {
+
+        background: #111111;
+
+        color: white;
+
+        border-color: #111111;
+
+        transform: scale(1.03);
+
+    }
+
+
+    .option-button {
+
+        transition: all 0.2s ease;
+
+    }
+
+
+    .option-button:hover {
+
+        transform: translateY(-2px);
+
+    }
+
+</style>
 </head>
 <body>
 <!-- NAVIGATION -->
@@ -15,14 +47,18 @@
 <header class="navbar">
 
     <div class="logo">
+
         TalkWorld
+
     </div>
 
 
     <nav>
 
         <a href="index.html">
+
             Home
+
         </a>
 
     </nav>
@@ -39,13 +75,18 @@
 
 
         <p class="small-title">
+
             FIND SOMEONE
+
         </p>
 
 
         <h2>
+
             Who would you like to talk to?
+
         </h2>
+
 
 
         <!-- LANGUAGE OPTIONS -->
@@ -54,9 +95,13 @@
 
 
             <button
+
                 class="secondary-button option-button"
+
                 data-type="language"
+
                 data-value="anyone"
+
                 type="button">
 
                 🌎 Anyone
@@ -64,10 +109,15 @@
             </button>
 
 
+
             <button
+
                 class="secondary-button option-button"
+
                 data-type="language"
+
                 data-value="spanish"
+
                 type="button">
 
                 🇪🇸 Spanish
@@ -75,10 +125,15 @@
             </button>
 
 
+
             <button
+
                 class="secondary-button option-button"
+
                 data-type="language"
+
                 data-value="english"
+
                 type="button">
 
                 🇬🇧 English
@@ -86,10 +141,15 @@
             </button>
 
 
+
             <button
+
                 class="secondary-button option-button"
+
                 data-type="language"
+
                 data-value="french"
+
                 type="button">
 
                 🇫🇷 French
@@ -97,10 +157,15 @@
             </button>
 
 
+
             <button
+
                 class="secondary-button option-button"
+
                 data-type="language"
+
                 data-value="german"
+
                 type="button">
 
                 🇩🇪 German
@@ -113,6 +178,7 @@
 
 
         <br>
+
         <br>
 
 
@@ -120,17 +186,24 @@
         <!-- INTERESTS -->
 
         <h2>
+
             What are you interested in?
+
         </h2>
+
 
 
         <div class="buttons">
 
 
             <button
+
                 class="secondary-button option-button"
+
                 data-type="interest"
+
                 data-value="gaming"
+
                 type="button">
 
                 🎮 Gaming
@@ -138,10 +211,15 @@
             </button>
 
 
+
             <button
+
                 class="secondary-button option-button"
+
                 data-type="interest"
+
                 data-value="travel"
+
                 type="button">
 
                 ✈️ Travel
@@ -149,10 +227,15 @@
             </button>
 
 
+
             <button
+
                 class="secondary-button option-button"
+
                 data-type="interest"
+
                 data-value="music"
+
                 type="button">
 
                 🎵 Music
@@ -160,10 +243,15 @@
             </button>
 
 
+
             <button
+
                 class="secondary-button option-button"
+
                 data-type="interest"
+
                 data-value="movies"
+
                 type="button">
 
                 🎬 Movies
@@ -171,10 +259,15 @@
             </button>
 
 
+
             <button
+
                 class="secondary-button option-button"
+
                 data-type="interest"
+
                 data-value="just-talking"
+
                 type="button">
 
                 💬 Just talking
@@ -187,6 +280,7 @@
 
 
         <br>
+
         <br>
 
 
@@ -194,8 +288,11 @@
         <!-- FIND BUTTON -->
 
         <button
+
             class="primary-button"
+
             id="find-button"
+
             type="button">
 
             Find someone
@@ -214,14 +311,126 @@
 <footer>
 
     <p>
+
         © 2026 TalkWorld
+
     </p>
 
 </footer>
 
 
-<!-- JAVASCRIPT -->
 
-<script src="./talk.js"></script>
+<!-- TALKWORLD JAVASCRIPT -->
+
+<script>
+
+    let selectedLanguage = null;
+
+    let selectedInterest = null;
+
+
+    const optionButtons = document.querySelectorAll(".option-button");
+
+    const findButton = document.querySelector("#find-button");
+
+
+
+    optionButtons.forEach(function(button) {
+
+
+        button.addEventListener("click", function() {
+
+
+            const type = button.dataset.type;
+
+            const value = button.dataset.value;
+
+
+
+            if (type === "language") {
+
+
+                selectedLanguage = value;
+
+
+                document
+                    .querySelectorAll('[data-type="language"]')
+                    .forEach(function(languageButton) {
+
+                        languageButton.classList.remove("selected");
+
+                    });
+
+
+                button.classList.add("selected");
+
+
+            }
+
+
+
+            if (type === "interest") {
+
+
+                selectedInterest = value;
+
+
+                document
+                    .querySelectorAll('[data-type="interest"]')
+                    .forEach(function(interestButton) {
+
+                        interestButton.classList.remove("selected");
+
+                    });
+
+
+                button.classList.add("selected");
+
+
+            }
+
+
+        });
+
+
+    });
+
+
+
+    findButton.addEventListener("click", function() {
+
+
+        if (!selectedLanguage) {
+
+            alert("Please choose a language first.");
+
+            return;
+
+        }
+
+
+        if (!selectedInterest) {
+
+            alert("Please choose an interest first.");
+
+            return;
+
+        }
+
+
+        alert(
+
+            "Searching for someone...\n\n" +
+
+            "Language: " + selectedLanguage +
+
+            "\nInterest: " + selectedInterest
+
+        );
+
+
+    });
+
+</script>
 </body>
 </html>
