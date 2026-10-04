@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>My account - TalkWorld</title>
+
+    <link rel="stylesheet" href="style.css">
+
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+
+    <style>
+
+        .account-container {
+            max-width: 700px;
+            margin: 70px auto;
+            padding: 40px 25px;
+            text-align: center;
+        }
+
+        .account-card {
+            margin-top: 35px;
+            padding: 30px;
+            border: 1px solid #e5e5e5;
+            border-radius: 18px;
+            background: white;
+            text-align: left;
+        }
+
+        .account-row {
+            padding: 15px 0;
+            border-bottom: 1px solid #eeeeee;
+        }
+
+        .account-row:last-child {
+            border-bottom: none;
+        }
+
+        .account-label {
+            font-size: 13px;
+            color: #777;
+            margin-bottom: 5px;
+        }
+
+        .account-value {
+            font-size: 17px;
+            font-weight: 600;
+        }
+
+        .account-buttons {
+            margin-top: 30px;
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .logout-button {
+            padding: 13px 22px;
+            border: 1px solid #111;
+            background: white;
+            color: #111;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 15px;
+        }
+
+        .logout-button:hover {
+            background: #111;
+            color: white;
+        }
+
+        .message {
+            margin-top: 20px;
+            font-weight: 500;
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<header class="navbar">
+
+    <div class="logo">
+        TalkWorld
+    </div>
+
+    <nav>
+
+        <a href="index.html">
+            Home
+        </a>
+
+    </nav>
+
+</header>
+
+
+<main>
+
+
+<section class="account-container">
+
+    <p class="small-title">
+        YOUR TALKWORLD ACCOUNT
+    </p>
+
+
+    <h1>
+        Welcome 👋
+    </h1>
+
+
+    <p>
+        This is your personal TalkWorld space.
+    </p>
+
+
+    <div class="account-card">
+
+
+        <div class="account-row">
+
+            <div class="account-label">
+                Username
+            </div>
+
+            <div
+                class="account-value"
+                id="username"
+            >
+                Loading...
+            </div>
+
+        </div>
+
+
+        <div class="account-row">
+
+            <div class="account-label">
+                Email
+            </div>
+
+            <div
+                class="account-value"
+                id="email"
+            >
+                Loading...
+            </div>
+
+        </div>
+
+
+        <div class="account-row">
+
+            <div class="account-label">
+                Country
+            </div>
+
+            <div
+                class="account-value"
+                id="country"
+            >
+                Not set
+            </div>
+
+        </div>
+
+
+        <div class="account-row">
+
+            <div class="account-label">
+                Language
+            </div>
+
+            <div
+                class="account-value"
+                id="language"
+            >
+                Not set
+            </div>
+
+        </div>
+
+
+        <div class="account-row">
+
+            <div class="account-label">
+                Interest
+            </div>
+
+            <div
+                class="account-value"
+                id="interest"
+            >
+                Not set
+            </div>
+
+        </div>
+
+
+    </div>
+
+
+    <div class="account-buttons">
+
+        <button
+            class="primary-button"
+            id="find-button"
+            type="button"
+        >
+            Find someone
+        </button>
+
+
+        <button
+            class="logout-button"
+            id="logout-button"
+            type="button"
+        >
+            Log out
+        </button>
+
+    </div>
+
+
+    <div
+        id="message"
+        class="message"
+    ></div>
+
+
+</section>
+
+
+</main>
+
+
+<footer>
+
+    <p>
+        © 2026 TalkWorld
+    </p>
+
+</footer>
+
+
+
+<script>
+
+
+/* ============================= */
+/* SUPABASE CONFIGURATION        */
+/* ============================= */
+
+
+const SUPABASE_URL =
+    "https://arltyssfvxusgbczehwd.supabase.co";
+
+
+const SUPABASE_PUBLISHABLE_KEY =
+    "https://arltyssfvxusgbczehwd.supabase.co/rest/v1/";
+
+
+
+/* ============================= */
+/* CREATE SUPABASE CLIENT        */
+/* ============================= */
+
+
+const supabaseClient =
+    window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_PUBLISHABLE_KEY
+    );
+
+
+
+/* ============================= */
+/* ELEMENTS                      */
+/* ============================= */
+
+
+const usernameElement =
+    document.querySelector("#username");
+
+
+const emailElement =
+    document.querySelector("#email");
+
+
+const countryElement =
+    document.querySelector("#country");
+
+
+const languageElement =
+    document.querySelector("#language");
+
+
+const interestElement =
+    document.querySelector("#interest");
+
+
+const messageElement =
+    document.querySelector("#message");
+
+
+const logoutButton =
+    document.querySelector("#logout-button");
+
+
+const findButton =
+    document.querySelector("#find-button");
+
+
+
+/* ============================= */
+/* LOAD ACCOUNT                  */
+/* ============================= */
+
+
+async function loadAccount() {
+
+
+    const {
+        data: {
+            user
+        }
+    } =
+        await supabaseClient.auth.getUser();
+
+
+    /* No logged-in user */
+
+    if (!user) {
+
+        window.location.href =
+            "login.html";
+
+        return;
+
+    }
+
+
+    /* Show email */
+
+    emailElement.textContent =
+        user.email || "Not available";
+
+
+    /* Get profile */
+
+    const {
+        data: profile,
+        error
+    } =
+        await supabaseClient
+            .from("profiles")
+            .select("*")
+            .eq("id", user.id)
+            .single();
+
+
+    if (error) {
+
+        console.error(error);
+
+        messageElement.textContent =
+            "Could not load your profile.";
+
+        messageElement.style.color =
+            "red";
+
+        return;
+
+    }
+
+
+    /* Show profile information */
+
+    usernameElement.textContent =
+        profile.username || "Not set";
+
+
+    countryElement.textContent =
+        profile.country || "Not set";
+
+
+    languageElement.textContent =
+        profile.language || "Not set";
+
+
+    interestElement.textContent =
+        profile.interest || "Not set";
+
+}
+
+
+
+/* ============================= */
+/* LOG OUT                       */
+/* ============================= */
+
+
+logoutButton.addEventListener(
+    "click",
+    async function() {
+
+
+        await supabaseClient.auth.signOut();
+
+
+        window.location.href =
+            "index.html";
+
+
+    }
+);
+
+
+
+/* ============================= */
+/* FIND SOMEONE                  */
+/* ============================= */
+
+
+findButton.addEventListener(
+    "click",
+    function() {
+
+        window.location.href =
+            "talk.html";
+
+    }
+);
+
+
+
+/* ============================= */
+/* START                         */
+/* ============================= */
+
+
+loadAccount();
+
+
+</script>
+
+
+</body>
+
+</html>
