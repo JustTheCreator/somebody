@@ -1,243 +1,278 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Create your account - TalkWorld</title>
-
-<link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sign Up - TalkWorld</title>
 
 <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
 
 <style>
-.signup-container {
-max-width: 500px;
-margin: 80px auto;
-padding: 40px 25px;
-text-align: center;
-}
+    body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background: #f7f7f7;
+        color: #111;
+    }
 
-.signup-container h1 {
-margin-bottom: 10px;
-}
+    .container {
+        max-width: 450px;
+        margin: 60px auto;
+        padding: 30px;
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+    }
 
-.signup-container p {
-margin-bottom: 30px;
-}
+    h1 {
+        margin-bottom: 10px;
+    }
 
-.signup-form {
-display: flex;
-flex-direction: column;
-gap: 15px;
-}
+    .subtitle {
+        color: #666;
+        margin-bottom: 30px;
+    }
 
-.signup-form input {
-width: 100%;
-padding: 15px;
-font-size: 16px;
-border: 1px solid #ddd;
-border-radius: 10px;
-box-sizing: border-box;
-}
+    label {
+        display: block;
+        margin-top: 18px;
+        margin-bottom: 8px;
+        font-weight: 600;
+    }
 
-.message {
-margin-top: 20px;
-font-weight: 500;
-}
+    input {
+        width: 100%;
+        box-sizing: border-box;
+        padding: 14px;
+        border: 1px solid #ddd;
+        border-radius: 10px;
+        font-size: 16px;
+    }
+
+    button {
+        width: 100%;
+        padding: 15px;
+        margin-top: 25px;
+        border: none;
+        border-radius: 12px;
+        background: #111;
+        color: white;
+        font-size: 16px;
+        cursor: pointer;
+    }
+
+    button:disabled {
+        opacity: 0.6;
+    }
+
+    #message {
+        margin-top: 20px;
+        text-align: center;
+        line-height: 1.5;
+    }
+
+    .login-link {
+        display: block;
+        margin-top: 25px;
+        text-align: center;
+        color: #111;
+    }
 </style>
 </head>
-
 <body>
+<div class="container">
+<h1>Create your TalkWorld account</h1>
 
-<header class="navbar">
-
-<div class="logo">
-TalkWorld
-</div>
-
-<nav>
-<a href="index.html">Home</a>
-</nav>
-
-</header>
-
-<main>
-
-<section class="signup-container">
-
-<p class="small-title">
-JOIN TALKWORLD
+<p class="subtitle">
+    Join people from around the world.
 </p>
 
-<h1>
-Create your account
-</h1>
+<form id="signup-form">
 
-<p>
-Create your free TalkWorld account and start talking with people around the world.
-</p>
+    <label for="username">
+        Username
+    </label>
 
-<form class="signup-form" id="signup-form">
+    <input
+        type="text"
+        id="username"
+        placeholder="Choose a username"
+        maxlength="30"
+        required
+    >
 
-<input
-type="text"
-id="username"
-placeholder="Username"
-required
->
 
-<input
-type="email"
-id="email"
-placeholder="Email"
-required
->
+    <label for="email">
+        Email
+    </label>
 
-<input
-type="password"
-id="password"
-placeholder="Password"
-minlength="6"
-required
->
+    <input
+        type="email"
+        id="email"
+        placeholder="Your email"
+        required
+    >
 
-<button
-type="submit"
-class="primary-button"
-id="signup-button"
->
-Create account
-</button>
+
+    <label for="password">
+        Password
+    </label>
+
+    <input
+        type="password"
+        id="password"
+        placeholder="Create a password"
+        minlength="6"
+        required
+    >
+
+
+    <button id="signup-button" type="submit">
+        Create account
+    </button>
 
 </form>
 
-<div
-id="message"
-class="message"
-></div>
 
-</section>
-
-</main>
-
-<footer>
-<p>
-© 2026 TalkWorld
-</p>
-</footer>
+<div id="message"></div>
 
 
+<a href="login.html" class="login-link">
+    Already have an account? Log in
+</a>
+</div>
 <script>
 
-/* ============================= */
-/* SUPABASE CONFIGURATION */
-/* ============================= */
+const SUPABASE_URL =
+    "https://arltyssfvxusgbczehwd.supabase.co";
 
-const SUPABASE_URL = "https://arltyssfvxusgbczehwd.supabase.co";
-
-const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_6shqoWqM68h4HWe5FDae_Q_LBYXMPI5";
+const SUPABASE_PUBLISHABLE_KEY =
+    "sb_publishable_6shqoWqM68h4HWe5FDae_Q_LBYXMPI5";
 
 
-/* ============================= */
-/* CREATE SUPABASE CLIENT */
-/* ============================= */
+const supabaseClient =
+    window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_PUBLISHABLE_KEY
+    );
 
-const supabaseClient = window.supabase.createClient(
-SUPABASE_URL,
-SUPABASE_PUBLISHABLE_KEY
+
+const form =
+    document.querySelector("#signup-form");
+
+const button =
+    document.querySelector("#signup-button");
+
+const message =
+    document.querySelector("#message");
+
+
+form.addEventListener(
+    "submit",
+    async function(event) {
+
+        event.preventDefault();
+
+
+        const username =
+            document.querySelector("#username")
+                .value
+                .trim();
+
+        const email =
+            document.querySelector("#email")
+                .value
+                .trim();
+
+        const password =
+            document.querySelector("#password")
+                .value;
+
+
+        if (!username) {
+
+            message.textContent =
+                "Please choose a username.";
+
+            message.style.color = "red";
+
+            return;
+        }
+
+
+        button.disabled = true;
+
+        button.textContent =
+            "Creating account...";
+
+        message.textContent = "";
+
+
+        try {
+
+            const {
+                data,
+                error
+            } =
+                await supabaseClient.auth.signUp({
+
+                    email: email,
+
+                    password: password,
+
+                    options: {
+
+                        emailRedirectTo:
+                            "https://justthecreator.github.io/somebody/",
+
+                        data: {
+
+                            username: username
+
+                        }
+
+                    }
+
+                });
+
+
+            if (error) {
+                throw error;
+            }
+
+
+            message.textContent =
+                "Account created! Check your email to confirm your account.";
+
+            message.style.color =
+                "green";
+
+
+            button.textContent =
+                "Account created";
+
+        }
+
+        catch (error) {
+
+            console.error(error);
+
+            message.textContent =
+                error.message;
+
+            message.style.color =
+                "red";
+
+
+            button.disabled = false;
+
+            button.textContent =
+                "Create account";
+        }
+
+    }
 );
 
-
-/* ============================= */
-/* SIGN UP */
-/* ============================= */
-
-const form = document.querySelector("#signup-form");
-
-const button = document.querySelector("#signup-button");
-
-const message = document.querySelector("#message");
-
-
-form.addEventListener("submit", async function(event) {
-
-event.preventDefault();
-
-button.disabled = true;
-
-button.textContent = "Creating account...";
-
-message.textContent = "";
-
-try {
-
-const username =
-document.querySelector("#username").value.trim();
-
-const email =
-document.querySelector("#email").value.trim();
-
-const password =
-document.querySelector("#password").value;
-
-
-/* Create account */
-
-const { data, error } =
-await supabaseClient.auth.signUp({
-
-email: email,
-
-password: password,
-
-options: {
-
-data: {
-username: username
-}
-
-}
-
-});
-
-
-if (error) {
-throw error;
-}
-
-
-/* Success */
-
-message.textContent =
-"Account created! Check your email to confirm your account.";
-
-message.style.color = "green";
-
-button.textContent = "Account created";
-
-}
-
-catch (error) {
-
-console.error(error);
-
-message.textContent =
-"ERROR: " + error.message;
-
-message.style.color = "red";
-
-button.disabled = false;
-
-button.textContent = "Create account";
-
-}
-
-});
-
 </script>
-
 </body>
-
 </html>
