@@ -1,435 +1,672 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Find Someone - TalkWorld</title>
 
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Talk to someone - TalkWorld</title>
-
-<link rel="stylesheet" href="style.css">
+<script src="https://unpkg.com/@supabase/supabase-js@2"></script>
 
 <style>
+    body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background: #f7f7f7;
+        color: #111;
+    }
 
-    /* SELECTED OPTION */
+    .container {
+        max-width: 650px;
+        margin: 50px auto;
+        padding: 30px;
+        background: white;
+        border-radius: 22px;
+        box-shadow: 0 10px 35px rgba(0, 0, 0, 0.08);
+    }
 
-    .option-button.selected {
+    .small-title {
+        font-size: 13px;
+        letter-spacing: 2px;
+        color: #777;
+        margin-bottom: 10px;
+    }
 
-        background: #111111;
+    h1 {
+        margin: 0 0 10px;
+        font-size: 36px;
+    }
 
+    .description {
+        color: #666;
+        line-height: 1.6;
+        margin-bottom: 35px;
+    }
+
+    .section {
+        margin-top: 30px;
+    }
+
+    .section-title {
+        font-size: 18px;
+        font-weight: bold;
+        margin-bottom: 12px;
+    }
+
+    .options {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .option {
+        padding: 12px 16px;
+        border: 1px solid #ddd;
+        border-radius: 30px;
+        background: white;
+        cursor: pointer;
+        font-size: 15px;
+    }
+
+    .option:hover {
+        border-color: #111;
+    }
+
+    .option.selected {
+        background: #111;
         color: white;
-
-        border-color: #111111;
-
-        transform: scale(1.03);
-
+        border-color: #111;
     }
 
-
-    .option-button {
-
-        transition: all 0.2s ease;
-
+    #find-button {
+        width: 100%;
+        margin-top: 35px;
+        padding: 17px;
+        border: none;
+        border-radius: 13px;
+        background: #111;
+        color: white;
+        font-size: 17px;
+        cursor: pointer;
     }
 
-
-    .option-button:hover {
-
-        transform: translateY(-2px);
-
+    #find-button:disabled {
+        opacity: 0.6;
+        cursor: default;
     }
 
+    #message {
+        margin-top: 25px;
+        text-align: center;
+        font-size: 16px;
+    }
+
+    #result {
+        display: none;
+        margin-top: 30px;
+        padding: 25px;
+        border-radius: 18px;
+        background: #f4f4f4;
+    }
+
+    #result h2 {
+        margin-top: 0;
+    }
+
+    .profile-row {
+        margin: 12px 0;
+    }
+
+    .profile-label {
+        font-size: 12px;
+        color: #777;
+    }
+
+    .profile-value {
+        font-size: 17px;
+        margin-top: 3px;
+    }
+
+    #talk-button {
+        width: 100%;
+        margin-top: 20px;
+        padding: 15px;
+        border: none;
+        border-radius: 12px;
+        background: #111;
+        color: white;
+        font-size: 16px;
+        cursor: pointer;
+    }
+
+    .back {
+        display: inline-block;
+        margin-bottom: 25px;
+        color: #111;
+        text-decoration: none;
+    }
 </style>
 </head>
 <body>
-<!-- NAVIGATION -->
+<div class="container">
+<a href="account.html" class="back">
+    ← Back to account
+</a>
 
-<header class="navbar">
+<p class="small-title">
+    TALKWORLD
+</p>
 
-    <div class="logo">
+<h1>
+    Find someone to talk to
+</h1>
 
-        TalkWorld
+<p class="description">
+    Choose a language and an interest.
+    We'll look for someone compatible with you.
+</p>
+
+
+<!-- LANGUAGE -->
+
+<div class="section">
+
+    <div class="section-title">
+        What language do you want to talk in?
+    </div>
+
+    <div class="options" id="language-options">
+
+        <button class="option" data-value="Spanish">
+            🇪🇸 Spanish
+        </button>
+
+        <button class="option" data-value="English">
+            🇬🇧 English
+        </button>
+
+        <button class="option" data-value="French">
+            🇫🇷 French
+        </button>
+
+        <button class="option" data-value="German">
+            🇩🇪 German
+        </button>
+
+        <button class="option" data-value="Italian">
+            🇮🇹 Italian
+        </button>
+
+        <button class="option" data-value="Portuguese">
+            🇵🇹 Portuguese
+        </button>
+
+        <button class="option" data-value="Japanese">
+            🇯🇵 Japanese
+        </button>
+
+        <button class="option" data-value="Korean">
+            🇰🇷 Korean
+        </button>
+
+        <button class="option" data-value="Chinese">
+            🇨🇳 Chinese
+        </button>
+
+    </div>
+
+</div>
+
+
+<!-- INTEREST -->
+
+<div class="section">
+
+    <div class="section-title">
+        What do you want to talk about?
+    </div>
+
+    <div class="options" id="interest-options">
+
+        <button class="option" data-value="Travel">
+            ✈️ Travel
+        </button>
+
+        <button class="option" data-value="Music">
+            🎵 Music
+        </button>
+
+        <button class="option" data-value="Gaming">
+            🎮 Gaming
+        </button>
+
+        <button class="option" data-value="Sports">
+            ⚽ Sports
+        </button>
+
+        <button class="option" data-value="Movies">
+            🎬 Movies
+        </button>
+
+        <button class="option" data-value="Anime">
+            🎌 Anime
+        </button>
+
+        <button class="option" data-value="Technology">
+            💻 Technology
+        </button>
+
+        <button class="option" data-value="Languages">
+            🗣️ Languages
+        </button>
+
+        <button class="option" data-value="Culture">
+            🌎 Culture
+        </button>
+
+        <button class="option" data-value="Just talking">
+            💬 Just talking
+        </button>
+
+    </div>
+
+</div>
+
+
+<button id="find-button">
+    Find someone to talk to
+</button>
+
+
+<div id="message"></div>
+
+
+<!-- MATCH RESULT -->
+
+<div id="result">
+
+    <h2>
+        🎉 You found someone!
+    </h2>
+
+    <div class="profile-row">
+
+        <div class="profile-label">
+            Username
+        </div>
+
+        <div
+            class="profile-value"
+            id="match-username">
+        </div>
 
     </div>
 
 
-    <nav>
+    <div class="profile-row">
 
-        <a href="index.html">
-
-            Home
-
-        </a>
-
-    </nav>
-
-</header>
-
-
-
-<!-- MAIN CONTENT -->
-
-<main>
-
-    <section class="about">
-
-
-        <p class="small-title">
-
-            FIND SOMEONE
-
-        </p>
-
-
-        <h2>
-
-            Who would you like to talk to?
-
-        </h2>
-
-
-
-        <!-- LANGUAGE OPTIONS -->
-
-        <div class="buttons">
-
-
-            <button
-
-                class="secondary-button option-button"
-
-                data-type="language"
-
-                data-value="anyone"
-
-                type="button">
-
-                🌎 Anyone
-
-            </button>
-
-
-
-            <button
-
-                class="secondary-button option-button"
-
-                data-type="language"
-
-                data-value="spanish"
-
-                type="button">
-
-                🇪🇸 Spanish
-
-            </button>
-
-
-
-            <button
-
-                class="secondary-button option-button"
-
-                data-type="language"
-
-                data-value="english"
-
-                type="button">
-
-                🇬🇧 English
-
-            </button>
-
-
-
-            <button
-
-                class="secondary-button option-button"
-
-                data-type="language"
-
-                data-value="french"
-
-                type="button">
-
-                🇫🇷 French
-
-            </button>
-
-
-
-            <button
-
-                class="secondary-button option-button"
-
-                data-type="language"
-
-                data-value="german"
-
-                type="button">
-
-                🇩🇪 German
-
-            </button>
-
-
+        <div class="profile-label">
+            Country
         </div>
 
-
-
-        <br>
-
-        <br>
-
-
-
-        <!-- INTERESTS -->
-
-        <h2>
-
-            What are you interested in?
-
-        </h2>
-
-
-
-        <div class="buttons">
-
-
-            <button
-
-                class="secondary-button option-button"
-
-                data-type="interest"
-
-                data-value="gaming"
-
-                type="button">
-
-                🎮 Gaming
-
-            </button>
-
-
-
-            <button
-
-                class="secondary-button option-button"
-
-                data-type="interest"
-
-                data-value="travel"
-
-                type="button">
-
-                ✈️ Travel
-
-            </button>
-
-
-
-            <button
-
-                class="secondary-button option-button"
-
-                data-type="interest"
-
-                data-value="music"
-
-                type="button">
-
-                🎵 Music
-
-            </button>
-
-
-
-            <button
-
-                class="secondary-button option-button"
-
-                data-type="interest"
-
-                data-value="movies"
-
-                type="button">
-
-                🎬 Movies
-
-            </button>
-
-
-
-            <button
-
-                class="secondary-button option-button"
-
-                data-type="interest"
-
-                data-value="just-talking"
-
-                type="button">
-
-                💬 Just talking
-
-            </button>
-
-
+        <div
+            class="profile-value"
+            id="match-country">
         </div>
 
+    </div>
 
 
-        <br>
+    <div class="profile-row">
 
-        <br>
+        <div class="profile-label">
+            Language
+        </div>
 
+        <div
+            class="profile-value"
+            id="match-language">
+        </div>
 
-
-        <!-- FIND BUTTON -->
-
-        <button
-
-            class="primary-button"
-
-            id="find-button"
-
-            type="button">
-
-            Find someone
-
-        </button>
+    </div>
 
 
-    </section>
+    <div class="profile-row">
 
-</main>
+        <div class="profile-label">
+            Interest
+        </div>
 
+        <div
+            class="profile-value"
+            id="match-interest">
+        </div>
 
-
-<!-- FOOTER -->
-
-<footer>
-
-    <p>
-
-        © 2026 TalkWorld
-
-    </p>
-
-</footer>
+    </div>
 
 
+    <button id="talk-button">
+        Start conversation
+    </button>
 
-<!-- TALKWORLD JAVASCRIPT -->
-
+</div>
+</div>
 <script>
 
-    let selectedLanguage = null;
+const SUPABASE_URL =
+    "https://arltyssfvxusgbczehwd.supabase.co";
 
-    let selectedInterest = null;
-
-
-    const optionButtons = document.querySelectorAll(".option-button");
-
-    const findButton = document.querySelector("#find-button");
+const SUPABASE_PUBLISHABLE_KEY =
+    "sb_publishable_6shqoWqM68h4HWe5FDae_Q_LBYXMPI5";
 
 
-
-    optionButtons.forEach(function(button) {
-
-
-        button.addEventListener("click", function() {
-
-
-            const type = button.dataset.type;
-
-            const value = button.dataset.value;
+const supabaseClient =
+    window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_PUBLISHABLE_KEY
+    );
 
 
+let selectedLanguage = null;
+let selectedInterest = null;
+let matchedUser = null;
 
-            if (type === "language") {
 
+// LANGUAGE SELECTION
 
-                selectedLanguage = value;
+document
+    .querySelectorAll("#language-options .option")
+    .forEach(function(button) {
 
+        button.addEventListener(
+            "click",
+            function() {
 
                 document
-                    .querySelectorAll('[data-type="language"]')
-                    .forEach(function(languageButton) {
+                    .querySelectorAll(
+                        "#language-options .option"
+                    )
+                    .forEach(function(option) {
 
-                        languageButton.classList.remove("selected");
+                        option.classList.remove(
+                            "selected"
+                        );
 
                     });
 
 
                 button.classList.add("selected");
 
+                selectedLanguage =
+                    button.dataset.value;
 
             }
-
-
-
-            if (type === "interest") {
-
-
-                selectedInterest = value;
-
-
-                document
-                    .querySelectorAll('[data-type="interest"]')
-                    .forEach(function(interestButton) {
-
-                        interestButton.classList.remove("selected");
-
-                    });
-
-
-                button.classList.add("selected");
-
-
-            }
-
-
-        });
-
-
-    });
-
-
-
-    findButton.addEventListener("click", function() {
-
-
-        if (!selectedLanguage) {
-
-            alert("Please choose a language first.");
-
-            return;
-
-        }
-
-
-        if (!selectedInterest) {
-
-            alert("Please choose an interest first.");
-
-            return;
-
-        }
-
-
-        alert(
-
-            "Searching for someone...\n\n" +
-
-            "Language: " + selectedLanguage +
-
-            "\nInterest: " + selectedInterest
-
         );
 
+    });
+
+
+// INTEREST SELECTION
+
+document
+    .querySelectorAll("#interest-options .option")
+    .forEach(function(button) {
+
+        button.addEventListener(
+            "click",
+            function() {
+
+                document
+                    .querySelectorAll(
+                        "#interest-options .option"
+                    )
+                    .forEach(function(option) {
+
+                        option.classList.remove(
+                            "selected"
+                        );
+
+                    });
+
+
+                button.classList.add("selected");
+
+                selectedInterest =
+                    button.dataset.value;
+
+            }
+        );
 
     });
+
+
+// FIND SOMEONE
+
+document
+    .querySelector("#find-button")
+    .addEventListener(
+        "click",
+        async function() {
+
+            const button =
+                document.querySelector("#find-button");
+
+            const message =
+                document.querySelector("#message");
+
+            const result =
+                document.querySelector("#result");
+
+
+            result.style.display = "none";
+
+
+            if (!selectedLanguage) {
+
+                message.textContent =
+                    "Please choose a language.";
+
+                message.style.color = "red";
+
+                return;
+            }
+
+
+            if (!selectedInterest) {
+
+                message.textContent =
+                    "Please choose an interest.";
+
+                message.style.color = "red";
+
+                return;
+            }
+
+
+            button.disabled = true;
+
+            button.textContent =
+                "Searching...";
+
+            message.textContent =
+                "Looking for someone compatible...";
+
+            message.style.color = "#666";
+
+
+            try {
+
+                // GET CURRENT USER
+
+                const {
+                    data: {
+                        user
+                    },
+                    error: userError
+                } = await supabaseClient.auth.getUser();
+
+
+                if (userError) {
+                    throw userError;
+                }
+
+
+                if (!user) {
+
+                    window.location.href =
+                        "login.html";
+
+                    return;
+                }
+
+
+                // SEARCH MATCH
+
+                const {
+                    data: profiles,
+                    error: profileError
+                } = await supabaseClient
+                    .from("profiles")
+                    .select(
+                        "id, username, country, language, interest"
+                    )
+                    .eq(
+                        "language",
+                        selectedLanguage
+                    )
+                    .eq(
+                        "interest",
+                        selectedInterest
+                    )
+                    .neq(
+                        "id",
+                        user.id
+                    )
+                    .limit(1);
+
+
+                if (profileError) {
+                    throw profileError;
+                }
+
+
+                if (!profiles || profiles.length === 0) {
+
+                    message.textContent =
+                        "We couldn't find anyone yet. Try another language or interest.";
+
+                    message.style.color = "#666";
+
+                    button.disabled = false;
+
+                    button.textContent =
+                        "Find someone to talk to";
+
+                    return;
+                }
+
+
+                matchedUser =
+                    profiles[0];
+
+
+                // SHOW MATCH
+
+                document.querySelector(
+                    "#match-username"
+                ).textContent =
+                    matchedUser.username ||
+                    "TalkWorld user";
+
+
+                document.querySelector(
+                    "#match-country"
+                ).textContent =
+                    matchedUser.country ||
+                    "Not specified";
+
+
+                document.querySelector(
+                    "#match-language"
+                ).textContent =
+                    matchedUser.language ||
+                    "Not specified";
+
+
+                document.querySelector(
+                    "#match-interest"
+                ).textContent =
+                    matchedUser.interest ||
+                    "Not specified";
+
+
+                result.style.display =
+                    "block";
+
+
+                message.textContent =
+                    "Someone compatible was found!";
+
+                message.style.color =
+                    "green";
+
+
+                button.disabled = false;
+
+                button.textContent =
+                    "Find someone else";
+
+            }
+
+            catch (error) {
+
+                console.error(error);
+
+                message.textContent =
+                    error.message;
+
+                message.style.color =
+                    "red";
+
+
+                button.disabled = false;
+
+                button.textContent =
+                    "Find someone to talk to";
+            }
+
+        }
+    );
+
+
+// START CONVERSATION
+
+document
+    .querySelector("#talk-button")
+    .addEventListener(
+        "click",
+        function() {
+
+            if (!matchedUser) {
+                return;
+            }
+
+
+            // For now we save the selected
+            // person locally.
+            // The real private chat will be
+            // the next step.
+
+            localStorage.setItem(
+                "talkworld_match",
+                JSON.stringify(matchedUser)
+            );
+
+
+            window.location.href =
+                "chat.html";
+
+        }
+    );
 
 </script>
 </body>
