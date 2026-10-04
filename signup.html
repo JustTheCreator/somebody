@@ -136,5 +136,67 @@
     </p>
 
 </footer>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase.js"></script>
+
+<script>
+const signupButton = document.querySelector("#signup-button");
+const message = document.querySelector("#message");
+
+signupButton.addEventListener("click", async function () {
+
+const username = document.querySelector("#username").value.trim();
+const email = document.querySelector("#email").value.trim();
+const password = document.querySelector("#password").value;
+
+if (!username || !email || !password) {
+message.textContent = "Please fill in all fields.";
+return;
+}
+
+if (password.length < 6) {
+message.textContent = "Password must be at least 6 characters.";
+return;
+}
+
+signupButton.disabled = true;
+signupButton.textContent = "Creating account...";
+
+const { data, error } = await supabaseClient.auth.signUp({
+email: email,
+password: password
+});
+
+if (error) {
+message.textContent = error.message;
+signupButton.disabled = false;
+signupButton.textContent = "Create account";
+return;
+}
+
+if (data.user) {
+
+const { error: profileError } = await supabaseClient
+.from("profiles")
+.insert({
+id: data.user.id,
+username: username
+});
+
+if (profileError) {
+message.textContent =
+"Account created, but your profile could not be saved.";
+console.error(profileError);
+} else {
+message.textContent =
+"Account created successfully! Check your email.";
+}
+}
+
+signupButton.disabled = false;
+signupButton.textContent = "Create account";
+});
+</script>
+
 </body>
 </html>
