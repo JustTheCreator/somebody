@@ -1,8 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
 <meta charset="UTF-8">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,29 +8,24 @@
 <title>Talk to someone - TalkWorld</title>
 
 <link rel="stylesheet" href="style.css">
-
 </head>
-
-
 <body>
-
-
 <!-- NAVIGATION -->
 
 <header class="navbar">
 
-<div class="logo">
-TalkWorld
-</div>
+    <div class="logo">
+        TalkWorld
+    </div>
 
 
-<nav>
+    <nav>
 
-<a href="index.html">
-Home
-</a>
+        <a href="index.html">
+            Home
+        </a>
 
-</nav>
+    </nav>
 
 </header>
 
@@ -42,108 +35,175 @@ Home
 
 <main>
 
-<section class="about">
+    <section class="about">
 
 
-<p class="small-title">
-FIND SOMEONE
-</p>
+        <p class="small-title">
+            FIND SOMEONE
+        </p>
 
 
-<h2>
-Who would you like to talk to?
-</h2>
+        <h2>
+            Who would you like to talk to?
+        </h2>
 
 
-<!-- LANGUAGE -->
+        <!-- LANGUAGE OPTIONS -->
 
-<div class="buttons">
-
-<button class="secondary-button">
-🌎 Anyone
-</button>
+        <div class="buttons">
 
 
-<button class="secondary-button">
-🇪🇸 Spanish
-</button>
+            <button
+                class="secondary-button option-button"
+                data-type="language"
+                data-value="anyone"
+                type="button">
+
+                🌎 Anyone
+
+            </button>
 
 
-<button class="secondary-button">
-🇬🇧 English
-</button>
+            <button
+                class="secondary-button option-button"
+                data-type="language"
+                data-value="spanish"
+                type="button">
+
+                🇪🇸 Spanish
+
+            </button>
 
 
-<button class="secondary-button">
-🇫🇷 French
-</button>
+            <button
+                class="secondary-button option-button"
+                data-type="language"
+                data-value="english"
+                type="button">
+
+                🇬🇧 English
+
+            </button>
 
 
-<button class="secondary-button">
-🇩🇪 German
-</button>
+            <button
+                class="secondary-button option-button"
+                data-type="language"
+                data-value="french"
+                type="button">
 
-</div>
+                🇫🇷 French
 
-
-
-<br>
-<br>
-
+            </button>
 
 
-<!-- INTERESTS -->
+            <button
+                class="secondary-button option-button"
+                data-type="language"
+                data-value="german"
+                type="button">
 
-<h2>
-What are you interested in?
-</h2>
+                🇩🇪 German
 
-
-<div class="buttons">
-
-<button class="secondary-button">
-🎮 Gaming
-</button>
+            </button>
 
 
-<button class="secondary-button">
-✈️ Travel
-</button>
-
-
-<button class="secondary-button">
-🎵 Music
-</button>
-
-
-<button class="secondary-button">
-🎬 Movies
-</button>
-
-
-<button class="secondary-button">
-💬 Just talking
-</button>
-
-</div>
+        </div>
 
 
 
-<br>
-<br>
+        <br>
+        <br>
 
 
 
-<!-- FIND BUTTON -->
+        <!-- INTERESTS -->
 
-<button class="primary-button">
-
-Find someone
-
-</button>
+        <h2>
+            What are you interested in?
+        </h2>
 
 
-</section>
+        <div class="buttons">
+
+
+            <button
+                class="secondary-button option-button"
+                data-type="interest"
+                data-value="gaming"
+                type="button">
+
+                🎮 Gaming
+
+            </button>
+
+
+            <button
+                class="secondary-button option-button"
+                data-type="interest"
+                data-value="travel"
+                type="button">
+
+                ✈️ Travel
+
+            </button>
+
+
+            <button
+                class="secondary-button option-button"
+                data-type="interest"
+                data-value="music"
+                type="button">
+
+                🎵 Music
+
+            </button>
+
+
+            <button
+                class="secondary-button option-button"
+                data-type="interest"
+                data-value="movies"
+                type="button">
+
+                🎬 Movies
+
+            </button>
+
+
+            <button
+                class="secondary-button option-button"
+                data-type="interest"
+                data-value="just-talking"
+                type="button">
+
+                💬 Just talking
+
+            </button>
+
+
+        </div>
+
+
+
+        <br>
+        <br>
+
+
+
+        <!-- FIND BUTTON -->
+
+        <button
+            class="primary-button"
+            id="find-button"
+            type="button">
+
+            Find someone
+
+        </button>
+
+
+    </section>
 
 </main>
 
@@ -153,13 +213,15 @@ Find someone
 
 <footer>
 
-<p>
-© 2026 TalkWorld
-</p>
+    <p>
+        © 2026 TalkWorld
+    </p>
 
 </footer>
 
 
-</body>
+<!-- JAVASCRIPT -->
 
+<script src="./talk.js"></script>
+</body>
 </html>
