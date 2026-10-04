@@ -1,460 +1,244 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
-<meta charset="UTF-8">
-
-<meta
-name="viewport"
-content="width=device-width, initial-scale=1.0"
->
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>My Account - TalkWorld</title>
-
-<link rel="stylesheet" href="style.css">
 
 <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
 
 <style>
+    body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background: #f7f7f7;
+        color: #111;
+    }
 
-.account-container {
-max-width: 700px;
-margin: 70px auto;
-padding: 30px 25px;
-}
+    .container {
+        max-width: 600px;
+        margin: 60px auto;
+        padding: 30px;
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+    }
 
-.account-card {
-border: 1px solid #e5e5e5;
-border-radius: 18px;
-padding: 30px;
-margin-top: 30px;
-}
+    h1 {
+        margin-bottom: 10px;
+    }
 
-.profile-item {
-padding: 15px 0;
-border-bottom: 1px solid #eee;
-}
+    .subtitle {
+        color: #666;
+        margin-bottom: 30px;
+    }
 
-.profile-item:last-child {
-border-bottom: none;
-}
+    .info {
+        margin-bottom: 20px;
+    }
 
-.profile-label {
-font-size: 13px;
-color: #777;
-margin-bottom: 5px;
-}
+    .label {
+        font-size: 13px;
+        color: #777;
+        margin-bottom: 5px;
+    }
 
-.profile-value {
-font-size: 18px;
-font-weight: 600;
-}
+    .value {
+        font-size: 18px;
+        font-weight: 500;
+    }
 
-.account-buttons {
-display: flex;
-flex-direction: column;
-gap: 15px;
-margin-top: 30px;
-}
+    .button {
+        display: block;
+        width: 100%;
+        box-sizing: border-box;
+        padding: 15px;
+        margin-top: 15px;
+        border: none;
+        border-radius: 12px;
+        background: #111;
+        color: white;
+        text-align: center;
+        text-decoration: none;
+        cursor: pointer;
+        font-size: 16px;
+    }
 
-.profile-link {
-display: block;
-width: 100%;
-box-sizing: border-box;
-text-align: center;
-text-decoration: none;
-}
+    .button.secondary {
+        background: #eee;
+        color: #111;
+    }
 
-.logout-button {
-padding: 14px 22px;
-border: 1px solid #ddd;
-background: white;
-border-radius: 10px;
-cursor: pointer;
-font-size: 16px;
-}
-
-.message {
-margin-top: 20px;
-font-weight: 500;
-}
-
+    #message {
+        margin-top: 20px;
+        color: red;
+    }
 </style>
-
 </head>
-
-
 <body>
+<div class="container">
+<h1>Welcome to TalkWorld</h1>
 
-
-<header class="navbar">
-
-<div class="logo">
-TalkWorld
-</div>
-
-<nav>
-
-<a href="index.html">
-Home
-</a>
-
-</nav>
-
-</header>
-
-
-<main>
-
-
-<section class="account-container">
-
-
-<p class="small-title">
-MY ACCOUNT
+<p class="subtitle">
+    Your profile
 </p>
 
-
-<h1>
-Welcome to TalkWorld
-</h1>
-
-
-<p>
-Your profile
-</p>
-
-
-<div class="account-card">
-
-
-<div class="profile-item">
-
-<div class="profile-label">
-Username
+<div class="info">
+    <div class="label">Username</div>
+    <div class="value" id="username">Loading...</div>
 </div>
 
-<div
-class="profile-value"
-id="username"
->
-Loading...
+<div class="info">
+    <div class="label">Email</div>
+    <div class="value" id="email">Loading...</div>
 </div>
 
+<div class="info">
+    <div class="label">Country</div>
+    <div class="value" id="country">Loading...</div>
 </div>
 
-
-<div class="profile-item">
-
-<div class="profile-label">
-Email
+<div class="info">
+    <div class="label">Language</div>
+    <div class="value" id="language">Loading...</div>
 </div>
 
-<div
-class="profile-value"
-id="email"
->
-Loading...
+<div class="info">
+    <div class="label">Interest</div>
+    <div class="value" id="interest">Loading...</div>
 </div>
 
-</div>
-
-
-<div class="profile-item">
-
-<div class="profile-label">
-Country
-</div>
-
-<div
-class="profile-value"
-id="country"
->
-Not set
-</div>
-
-</div>
-
-
-<div class="profile-item">
-
-<div class="profile-label">
-Language
-</div>
-
-<div
-class="profile-value"
-id="language"
->
-Not set
-</div>
-
-</div>
-
-
-<div class="profile-item">
-
-<div class="profile-label">
-Interest
-</div>
-
-<div
-class="profile-value"
-id="interest"
->
-Not set
-</div>
-
-</div>
-
-
-</div>
-
-
-<div class="account-buttons">
-
-
-<a
-href="profile.html"
-class="primary-button profile-link"
->
-Complete my profile
+<a href="profile.html" class="button">
+    Edit my profile
 </a>
 
-
-<a
-href="talk.html"
-class="primary-button profile-link"
->
-Find someone to talk to
+<a href="talk.html" class="button">
+    Find someone to talk to
 </a>
 
-
-<button
-class="logout-button"
-id="logout-button"
-type="button"
->
-Log out
+<button id="logout-button" class="button secondary">
+    Log out
 </button>
 
-
+<div id="message"></div>
 </div>
-
-
-<div
-id="message"
-class="message"
-></div>
-
-
-</section>
-
-
-</main>
-
-
-<footer>
-
-<p>
-© 2026 TalkWorld
-</p>
-
-</footer>
-
-
-
 <script>
 
-
-/* ============================= */
-/* SUPABASE CONFIGURATION */
-/* ============================= */
-
-
-const SUPABASE_URL =
-"https://arltyssfvxusgbczehwd.supabase.co";
-
+const SUPABASE_URL = "https://arltyssfvxusgbczehwd.supabase.co";
 
 const SUPABASE_PUBLISHABLE_KEY =
-"sb_publishable_6shqoWqM68h4HWe5FDae_Q_LBYXMPI5";
-
-
-/* ============================= */
-/* CREATE CLIENT */
-/* ============================= */
-
+    "sb_publishable_6shqoWqM68h4HWe5FDae_Q_LBYXMPI5";
 
 const supabaseClient =
-window.supabase.createClient(
-SUPABASE_URL,
-SUPABASE_PUBLISHABLE_KEY
-);
-
-
-/* ============================= */
-/* LOAD USER */
-/* ============================= */
+    window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_PUBLISHABLE_KEY
+    );
 
 
 async function loadUser() {
 
-try {
+    try {
 
-const result =
-await supabaseClient.auth.getUser();
+        const {
+            data: {
+                user
+            },
+            error: userError
+        } = await supabaseClient.auth.getUser();
+
+        if (userError) {
+            throw userError;
+        }
+
+        if (!user) {
+            window.location.href = "login.html";
+            return;
+        }
+
+        // EMAIL
+        document.querySelector("#email").textContent =
+            user.email || "Not set";
 
 
-const user =
-result.data.user;
+        // PROFILE
+        const {
+            data: profile,
+            error: profileError
+        } = await supabaseClient
+            .from("profiles")
+            .select("username, country, language, interest")
+            .eq("id", user.id)
+            .maybeSingle();
+
+        if (profileError) {
+            throw profileError;
+        }
 
 
-if (!user) {
+        if (!profile) {
 
-window.location.href =
-"login.html";
+            document.querySelector("#username").textContent =
+                "Not set";
 
-return;
+            document.querySelector("#country").textContent =
+                "Not set";
 
+            document.querySelector("#language").textContent =
+                "Not set";
+
+            document.querySelector("#interest").textContent =
+                "Not set";
+
+            return;
+        }
+
+
+        // USERNAME
+        document.querySelector("#username").textContent =
+            profile.username || "Not set";
+
+
+        // COUNTRY
+        document.querySelector("#country").textContent =
+            profile.country || "Not set";
+
+
+        // LANGUAGE
+        document.querySelector("#language").textContent =
+            profile.language || "Not set";
+
+
+        // INTEREST
+        document.querySelector("#interest").textContent =
+            profile.interest || "Not set";
+
+    }
+
+    catch (error) {
+
+        console.error(error);
+
+        document.querySelector("#message").textContent =
+            error.message;
+
+    }
 }
-
-
-/* EMAIL */
-
-document.querySelector("#email").textContent =
-user.email || "Not set";
-
-
-/* USERNAME */
-
-const username =
-user.user_metadata?.username;
-
-
-if (username) {
-
-document.querySelector("#username").textContent =
-username;
-
-} else {
-
-document.querySelector("#username").textContent =
-"Not set";
-
-}
-
-
-/* PROFILE */
-
-const profileResult =
-await supabaseClient
-.from("profiles")
-.select("country, language, interest")
-.eq("id", user.id)
-.maybeSingle();
-
-
-if (profileResult.data) {
-
-document.querySelector("#country").textContent =
-profileResult.data.country || "Not set";
-
-
-document.querySelector("#language").textContent =
-profileResult.data.language || "Not set";
-
-
-document.querySelector("#interest").textContent =
-profileResult.data.interest || "Not set";
-
-}
-
-
-} catch (error) {
-
-console.error(error);
-
-
-document.querySelector("#username").textContent =
-"Error";
-
-
-document.querySelector("#email").textContent =
-"Error";
-
-
-document.querySelector("#message").textContent =
-error.message;
-
-
-document.querySelector("#message").style.color =
-"red";
-
-}
-
-}
-
-
-/* ============================= */
-/* LOG OUT */
-/* ============================= */
 
 
 document
-.querySelector("#logout-button")
-.addEventListener(
-"click",
-async function() {
+    .querySelector("#logout-button")
+    .addEventListener("click", async function() {
 
+        await supabaseClient.auth.signOut();
 
-await supabaseClient
-.auth
-.signOut();
+        window.location.href = "index.html";
 
-
-window.location.href =
-"index.html";
-
-}
-);
-
-
-/* ============================= */
-/* START */
-/* ============================= */
+    });
 
 
 loadUser();
-supabaseClient.auth.getUser()
-.then(function(result) {
-
-if (result.error) {
-
-alert("SUPABASE ERROR: " + result.error.message);
-
-} else if (!result.data.user) {
-
-alert("NO USER FOUND");
-
-} else {
-
-alert("SUPABASE CONNECTED: " + result.data.user.email);
-
-}
-
-})
-.catch(function(error) {
-
-alert("ERROR: " + error.message);
-
-});
-
-
 
 </script>
-
-
 </body>
-
 </html>
