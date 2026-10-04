@@ -5,339 +5,214 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Create account - TalkWorld</title>
+<title>Create your account - TalkWorld</title>
 
 <link rel="stylesheet" href="style.css">
+
+<!-- Supabase -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase.js"></script>
+
+<style>
+.signup-container {
+max-width: 500px;
+margin: 80px auto;
+padding: 40px 25px;
+text-align: center;
+}
+
+.signup-container h1 {
+margin-bottom: 10px;
+}
+
+.signup-container p {
+margin-bottom: 30px;
+}
+
+.signup-form {
+display: flex;
+flex-direction: column;
+gap: 15px;
+}
+
+.signup-form input {
+width: 100%;
+padding: 15px;
+font-size: 16px;
+border: 1px solid #ddd;
+border-radius: 10px;
+box-sizing: border-box;
+}
+
+.message {
+margin-top: 20px;
+font-weight: 500;
+}
+</style>
 </head>
 
 <body>
 
 <header class="navbar">
-
-<div class="logo">
-TalkWorld
-</div>
+<div class="logo">TalkWorld</div>
 
 <nav>
-<a href="index.html">
-Home
-</a>
+<a href="index.html">Home</a>
 </nav>
-
 </header>
-
 
 <main>
 
-<section class="about">
+<section class="signup-container">
 
-<p class="small-title">
-JOIN TALKWORLD
-</p>
+<p class="small-title">JOIN TALKWORLD</p>
 
-<h2>
-Create your account
-</h2>
+<h1>Create your account</h1>
 
 <p>
-Create an account and start connecting
-with people around the world.
+Create your free TalkWorld account and start talking with people around the world.
 </p>
 
-
-<div style="
-max-width: 450px;
-margin: 40px auto;
-text-align: left;
-">
-
-<label for="username">
-Username
-</label>
+<form class="signup-form" id="signup-form">
 
 <input
-id="username"
 type="text"
-placeholder="Choose a username"
-style="
-width: 100%;
-padding: 15px;
-margin: 8px 0 20px;
-border: 1px solid #ddd;
-border-radius: 8px;
-font-size: 16px;
-">
-
-
-<label for="email">
-Email
-</label>
+id="username"
+placeholder="Username"
+required
+>
 
 <input
-id="email"
 type="email"
-placeholder="you@example.com"
-style="
-width: 100%;
-padding: 15px;
-margin: 8px 0 20px;
-border: 1px solid #ddd;
-border-radius: 8px;
-font-size: 16px;
-">
-
-
-<label for="password">
-Password
-</label>
+id="email"
+placeholder="Email"
+required
+>
 
 <input
-id="password"
 type="password"
-placeholder="Create a password"
-style="
-width: 100%;
-padding: 15px;
-margin: 8px 0 25px;
-border: 1px solid #ddd;
-border-radius: 8px;
-font-size: 16px;
-">
-
+id="password"
+placeholder="Password"
+required
+minlength="6"
+>
 
 <button
-id="signup-button"
+type="submit"
 class="primary-button"
-type="button"
-style="width: 100%;">
-
+id="signup-button"
+>
 Create account
-
 </button>
 
+</form>
 
-<p
+<div
 id="message"
-style="
-margin-top: 20px;
-text-align: center;
-word-break: break-word;
-">
-</p>
-
-</div>
+class="message"
+></div>
 
 </section>
 
 </main>
 
-
 <footer>
-
-<p>
-© 2026 TalkWorld
-</p>
-
+<p>© 2026 TalkWorld</p>
 </footer>
 
 
-<!-- SUPABASE -->
-
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-<script src="supabase.js"></script>
-
-
-<!-- CREATE ACCOUNT -->
-
 <script>
 
-const signupButton =
-document.querySelector("#signup-button");
+const form = document.querySelector("#signup-form");
+const button = document.querySelector("#signup-button");
+const message = document.querySelector("#message");
 
-const message =
-document.querySelector("#message");
+form.addEventListener("submit", async function(event) {
 
+event.preventDefault();
 
-signupButton.addEventListener("click", async function () {
+button.disabled = true;
+button.textContent = "Creating account...";
+message.textContent = "";
+message.style.color = "";
 
-const username =
-document.querySelector("#username").value.trim();
-
-const email =
-document.querySelector("#email").value.trim();
-
-const password =
-document.querySelector("#password").value;
-
-
-if (!username || !email || !password) {
-
-message.textContent =
-"Please fill in all fields.";
-
-return;
-}
-
-
-if (password.length < 6) {
-
-message.textContent =
-"Password must be at least 6 characters.";
-
-return;
-}
-
-
-signupButton.disabled = true;
-
-signupButton.textContent =
-"Creating account...";
-
-message.textContent =
-"Connecting to TalkWorld...";
-
+const username = document.querySelector("#username").value.trim();
+const email = document.querySelector("#email").value.trim();
+const password = document.querySelector("#password").value;
 
 try {
 
 if (!window.supabase) {
-
-throw new Error(
-"Supabase library did not load."
-);
-
+throw new Error("Supabase library did not load.");
 }
-
 
 if (!window.supabase.createClient) {
-
-throw new Error(
-"Supabase client is unavailable."
-);
-
+throw new Error("Supabase createClient is unavailable.");
 }
 
-
-if (!supabaseClient) {
-
-throw new Error(
-"Supabase client was not created."
-);
-
+if (!window.supabaseClient) {
+throw new Error("supabaseClient was not created.");
 }
 
-
-const result =
-await Promise.race([
+const result = await Promise.race([
 
 supabaseClient.auth.signUp({
-
 email: email,
-
 password: password
-
 }),
 
-new Promise(function (resolve) {
-
-setTimeout(function () {
-
-resolve({
-timeout: true
-});
-
+new Promise(function(_, reject) {
+setTimeout(function() {
+reject(new Error("Supabase request timed out after 10 seconds."));
 }, 10000);
-
 })
 
 ]);
 
-
-if (result.timeout) {
-
-throw new Error(
-"Supabase connection timed out."
-);
-
-}
-
-
 const data = result.data;
-
 const error = result.error;
 
-
 if (error) {
-
-throw new Error(
-error.message
-);
-
+throw error;
 }
-
 
 if (!data || !data.user) {
-
-throw new Error(
-"Supabase did not return a user."
-);
-
+throw new Error("Account was not created.");
 }
 
+const userId = data.user.id;
 
-const profileResult =
-await supabaseClient
+const profileResult = await supabaseClient
 .from("profiles")
-.insert({
-
-id: data.user.id,
-
+.insert([
+{
+id: userId,
 username: username
-
-});
-
+}
+]);
 
 if (profileResult.error) {
-
-console.error(
-profileResult.error
-);
-
-message.textContent =
-"Account created, but profile error: " +
-profileResult.error.message;
-
-signupButton.disabled = false;
-
-signupButton.textContent =
-"Create account";
-
-return;
-
+throw profileResult.error;
 }
 
-
 message.textContent =
-"Account created successfully! Check your email.";
+"Account created successfully! Check your email to confirm your account.";
 
-signupButton.textContent =
-"Account created ✓";
+message.style.color = "green";
 
-signupButton.disabled = true;
-
+button.textContent = "Account created";
 
 } catch (error) {
 
 console.error(error);
 
 message.textContent =
-"ERROR: " + error.message;
+"ERROR: " + (error.message || "Unknown error");
 
-signupButton.disabled = false;
+message.style.color = "red";
 
-signupButton.textContent =
-"Create account";
-
+button.disabled = false;
+button.textContent = "Create account";
 }
 
 });
@@ -345,5 +220,4 @@ signupButton.textContent =
 </script>
 
 </body>
-
 </html>
