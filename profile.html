@@ -33,7 +33,6 @@ margin-top: 30px;
 
 .profile-form label {
 font-weight: 600;
-margin-bottom: -12px;
 }
 
 .profile-form select {
@@ -48,7 +47,8 @@ box-sizing: border-box;
 
 .message {
 margin-top: 20px;
-font-weight: 500;
+font-weight: 600;
+line-height: 1.5;
 }
 
 </style>
@@ -78,7 +78,6 @@ Home
 
 <main>
 
-
 <section class="profile-container">
 
 
@@ -93,7 +92,8 @@ Tell us a little about yourself
 
 
 <p>
-This helps TalkWorld find people you might enjoy talking to.
+This information will help TalkWorld find people
+you may enjoy talking to.
 </p>
 
 
@@ -108,7 +108,10 @@ Country
 </label>
 
 
-<select id="country" required>
+<select
+id="country"
+required
+>
 
 <option value="">
 Select your country
@@ -171,7 +174,10 @@ Language you speak
 </label>
 
 
-<select id="language" required>
+<select
+id="language"
+required
+>
 
 <option value="">
 Select your language
@@ -226,7 +232,10 @@ What are you interested in?
 </label>
 
 
-<select id="interest" required>
+<select
+id="interest"
+required
+>
 
 <option value="">
 Select an interest
@@ -284,7 +293,6 @@ class="message"
 
 </section>
 
-
 </main>
 
 
@@ -295,7 +303,6 @@ class="message"
 </p>
 
 </footer>
-
 
 
 <script>
@@ -321,7 +328,6 @@ SUPABASE_PUBLISHABLE_KEY
 );
 
 
-
 /* ============================= */
 /* ELEMENTS */
 /* ============================= */
@@ -339,7 +345,6 @@ const message =
 document.querySelector("#message");
 
 
-
 /* ============================= */
 /* SAVE PROFILE */
 /* ============================= */
@@ -348,7 +353,6 @@ document.querySelector("#message");
 form.addEventListener(
 "submit",
 async function(event) {
-
 
 event.preventDefault();
 
@@ -361,11 +365,10 @@ saveButton.textContent =
 message.textContent = "";
 
 
-
 try {
 
 
-/* GET USER */
+/* GET CURRENT USER */
 
 const {
 data: {
@@ -378,16 +381,23 @@ await supabaseClient
 .getUser();
 
 
+if (userError) {
 
-if (userError || !user) {
-
-window.location.href =
-"login.html";
-
-return;
+throw new Error(
+"USER ERROR: " +
+userError.message
+);
 
 }
 
+
+if (!user) {
+
+throw new Error(
+"NO LOGGED-IN USER"
+);
+
+}
 
 
 /* GET VALUES */
@@ -410,10 +420,10 @@ document
 .value;
 
 
-
-/* UPDATE PROFILE */
+/* UPDATE */
 
 const {
+data,
 error
 } =
 await supabaseClient
@@ -430,16 +440,28 @@ interest: interest
 .eq(
 "id",
 user.id
-);
-
+)
+.select();
 
 
 if (error) {
 
-throw error;
+throw new Error(
+"DATABASE ERROR: " +
+error.message
+);
 
 }
 
+
+if (!data || data.length === 0) {
+
+throw new Error(
+"NO PROFILE WAS UPDATED. " +
+"The profile ID may not match the logged-in user."
+);
+
+}
 
 
 /* SUCCESS */
@@ -455,7 +477,6 @@ saveButton.textContent =
 "Saved!";
 
 
-
 setTimeout(
 function() {
 
@@ -463,12 +484,11 @@ window.location.href =
 "account.html";
 
 },
-1000
+1200
 );
 
 
 }
-
 
 catch (error) {
 
@@ -477,8 +497,8 @@ console.error(error);
 
 
 message.textContent =
-"ERROR: " +
 error.message;
+
 
 message.style.color =
 "red";
@@ -487,16 +507,14 @@ message.style.color =
 saveButton.disabled =
 false;
 
+
 saveButton.textContent =
 "Save profile";
 
-
 }
-
 
 }
 );
-
 
 </script>
 
